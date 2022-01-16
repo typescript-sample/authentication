@@ -1,12 +1,12 @@
+import { AuthenticationController } from 'authen-express';
 import { MongoUserRepository } from 'authen-mongo';
-import { AuthConfig, Authenticator, AuthInfo, initializeStatus } from 'authen-service';
+import { AuthConfig, Authenticator, initializeStatus, User } from 'authen-service';
 import { compare } from 'bcrypt';
 import { HealthController, LogController, Logger, Middleware, MiddlewareController, resources } from 'express-ext';
 import { generate } from 'jsonwebtoken-plus';
 import { Db } from 'mongodb';
 import { MongoChecker } from 'mongodb-extension';
 import { createValidator } from 'xvalidators';
-import { AuthenticationController } from './auth';
 import { UserController, useUserController } from './user';
 
 resources.createValidator = createValidator;
@@ -19,7 +19,7 @@ export interface ApplicationContext {
   health: HealthController;
   log: LogController;
   middleware: MiddlewareController;
-  authentication: AuthenticationController<AuthInfo>;
+  authentication: AuthenticationController<User>;
   user: UserController;
 }
 export function useContext(db: Db, logger: Logger, midLogger: Middleware, conf: Config): ApplicationContext {
