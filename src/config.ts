@@ -58,6 +58,11 @@ export const config = {
       failTime: 'failTime',
       failCount: 'failCount',
       lockedUntilTime: 'lockedUntilTime'
+    },
+    expires: 500,
+    template: {
+      subject: 'Verification Code',
+      body: '%s Use this code for verification. This code will expire in %s minutes'
     }
   },
   signup: {
@@ -83,7 +88,7 @@ export const config = {
       version: 'version'
     },
     url: 'http://localhost:8082/verify',
-    email: {
+    template: {
       subject: 'User registration confirmation',
       body: `
 Please click this link to confirm to activate your account:<br><a href="%s">Confirm Now</a><br><br>

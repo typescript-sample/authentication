@@ -12,9 +12,9 @@
   "author": "",
   "dependencies": {
     "@sendgrid/mail": "^7.6.0",
-    "authen-express": "^0.0.1",
-    "authen-mongo": "^0.0.1",
-    "authen-service": "^0.0.4",
+    "authen-express": "^0.0.3",
+    "authen-mongo": "^0.0.2",
+    "authen-service": "^0.0.5",
     "bcrypt": "^5.0.1",
     "bcrypt-plus": "^0.0.1",
     "config-plus": "^0.0.4",
@@ -38,9 +38,9 @@
     "sendgrid-plus": "^0.0.2",
     "signup-express": "^0.0.1",
     "signup-mongo": "^0.0.1",
-    "signup-service": "^0.0.3",
+    "signup-service": "^0.0.4",
     "uuid": "^8.3.2",
-    "xvalidators": "^0.0.3"
+    "xvalidators": "^0.0.4"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.0",
