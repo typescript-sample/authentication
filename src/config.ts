@@ -25,6 +25,7 @@ export const config = {
     uri: 'mongodb://localhost:27017',
     db: 'authentication'
   },
+  secret: 'secret',
   auth: {
     token: {
       secret: 'secretbackoffice',
@@ -57,6 +58,50 @@ export const config = {
       failTime: 'failTime',
       failCount: 'failCount',
       lockedUntilTime: 'lockedUntilTime'
+    }
+  },
+  signup: {
+    expires: 500,
+    userStatus: {
+      registered: 'R',
+      codeSent: 'V',
+      activated: 'A'
+    },
+    maxPasswordAge: 90,
+    fields: {
+      maxPasswordAge: 'maxPasswordAge'
+    },
+    map: {
+      firstName: 'surname',
+      lastName: 'givenName'
+    },
+    track: {
+      createdAt: 'createdAt',
+      createdBy: 'createdBy',
+      updatedAt: 'updatedAt',
+      updatedBy: 'updatedBy',
+      version: 'version'
+    },
+    url: 'http://localhost:8082/verify',
+    email: {
+      subject: 'User registration confirmation',
+      body: `
+Please click this link to confirm to activate your account:<br><a href="%s">Confirm Now</a><br><br>
+If the above button doesn't work for you, please click on the below link or copy paste it on to your browser<br>
+<a href="%s">%s</a><br><br>
+Your link will expire after "%s" minutes.
+
+Hẫy nhấn đường link ở đây để kích hoạt cài khoản của bạn: <br><a href="%s">Xác nhận</a><br><br>
+Nếu đường link đó không hoạt động, hãy sao chép đường link đó và dán vào trình duyệt web của bạn<br>
+<a href="%s">%s</a><br><br>
+Đường link này sẽ hết hạn sau "%s" phút.`
+    }
+  },
+  mail: {
+    key: '',
+    from: {
+      name: 'Supporter',
+      email: 'test@gmail.com'
     }
   }
 };
