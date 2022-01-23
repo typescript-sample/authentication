@@ -97,6 +97,30 @@ Nếu đường link đó không hoạt động, hãy sao chép đường link �
 Đường link này sẽ hết hạn sau "%s" phút.`
     }
   },
+  password: {
+    max: 3,
+    expires: 1500,
+    db: {
+      user: 'user',
+      password: 'authentication',
+      history: 'history'
+    },
+    fields: {
+      contact: 'email'
+    },
+    templates: {
+      reset: {
+        subject: 'Passcode to reset password',
+        body: `Your user name is %s. This is the passcode to reset your password: %s. This passcode will expire in %s minutes.<br>
+        Tên đăng nhập của bạn là %s. Hãy dùng mã sau để tạo mật khẩu lại: %s. Mã này sẽ hết hạn trong %s phút.`
+      },
+      change: {
+        subject: 'Passcode to change password',
+        body: `Your user name is %s. This is the passcode to reset your password: %s. This passcode will expire in %s minutes.<br>
+        Tên đăng nhập của bạn là %s. Hãy dùng mã sau để tạo mật khẩu lại: %s. Mã này sẽ hết hạn trong %s phút.`
+      },
+    }
+  },
   mail: {
     key: '',
     from: {

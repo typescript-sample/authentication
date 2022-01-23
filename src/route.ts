@@ -12,6 +12,10 @@ export function route(app: Application, ctx: ApplicationContext): void {
   app.post('/signup/signup', ctx.signup.signup);
   app.get('/signup/verify/:userId/:code', ctx.signup.verify);
 
+  app.post('/password/change', ctx.password.change);
+  app.post('/password/forgot', ctx.password.forgot);
+  app.post('/password/reset', ctx.password.reset);
+
   app.post('/users/search', ctx.user.search);
   app.get('/users/search', ctx.user.search);
   app.get('/users/:id', ctx.user.load);
