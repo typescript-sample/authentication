@@ -10,11 +10,14 @@ export function route(app: Application, ctx: ApplicationContext): void {
 
   app.post('/authentication/authenticate', parser.none(), ctx.authentication.authenticate);
   app.post('/signup/signup', ctx.signup.signup);
+  app.post('/signup/verify/:userId/:code', ctx.signup.verify);
   app.get('/signup/verify/:userId/:code', ctx.signup.verify);
 
-  app.post('/password/change', ctx.password.change);
+  app.get('/password/forgot/:contact', ctx.password.forgot);
   app.post('/password/forgot', ctx.password.forgot);
   app.post('/password/reset', ctx.password.reset);
+  app.post('/password/change', ctx.password.change);
+  app.put('/password/change', ctx.password.change);
 
   app.post('/users/search', ctx.user.search);
   app.get('/users/search', ctx.user.search);

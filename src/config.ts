@@ -87,7 +87,7 @@ export const config = {
       updatedBy: 'updatedBy',
       version: 'version'
     },
-    url: 'http://localhost:8082/verify',
+    url: 'http://localhost:8082/signup/verify',
     template: {
       subject: 'User registration confirmation',
       body: `

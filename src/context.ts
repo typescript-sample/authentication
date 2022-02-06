@@ -3,7 +3,6 @@ import { MongoUserRepository } from 'authen-mongo';
 import { Authenticator, AuthTemplateConfig, CodeMailSender, initializeStatus, User } from 'authen-service';
 import { compare } from 'bcrypt';
 import { Comparator } from 'bcrypt-plus';
-import { RC4Encrypter } from 'crypto-plus';
 import { HealthController, LogController, Logger, Middleware, MiddlewareController, resources } from 'express-ext';
 import { generate as generateToken } from 'jsonwebtoken-plus';
 import { Db } from 'mongodb';
@@ -47,7 +46,7 @@ export function useContext(db: Db, logger: Logger, midLogger: Middleware, conf: 
   const mailService = new SendGridMailService(conf.mail.key);
   const comparator = new Comparator();
 
-  const encrypter = new RC4Encrypter(conf.secret);
+  // const encrypter = new RC4Encrypter(conf.secret);
   const auth = conf.auth;
   const status = initializeStatus(conf.auth.status);
   const codeMailSender = new CodeMailSender(mailService.send, conf.mail.from, conf.auth.template.body, conf.auth.template.subject);
@@ -62,7 +61,7 @@ export function useContext(db: Db, logger: Logger, midLogger: Middleware, conf: 
   const validator = new Validator();
   const signupStatus = initStatus(conf.signup.status);
   const signupService = new SignupService<string, Signup>(signupStatus, signupRepository, generateId, comparator, comparator, passcodeRepository, signupMailSender.send, conf.signup.expires, validator.validate);
-  const signup = new SignupController(logger.error, signupService, encrypter.decrypt);
+  const signup = new SignupController(logger.error, signupService);
 
   const passwordMailSender = new MailSender(mailService.send, conf.mail.from, conf.password.templates.reset.body, conf.password.templates.reset.subject);
   const codeRepository = new PasscodeRepository<string>(db.collection('passwordCode'));
