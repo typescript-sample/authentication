@@ -25,7 +25,7 @@
     "express": "^4.17.2",
     "express-ext": "^0.1.17",
     "jsonwebtoken": "^8.5.1",
-    "jsonwebtoken-plus": "^0.0.5",
+    "jsonwebtoken-plus": "^0.0.6",
     "logger-core": "^0.3.0",
     "mongodb": "3.7.3",
     "mongodb-extension": "^0.1.9",

@@ -4,7 +4,7 @@ import { Authenticator, AuthTemplateConfig, CodeMailSender, initializeStatus, Us
 import { compare } from 'bcrypt';
 import { Comparator } from 'bcrypt-plus';
 import { HealthController, LogController, Logger, Middleware, MiddlewareController, resources } from 'express-ext';
-import { generate as generateToken } from 'jsonwebtoken-plus';
+import { generateToken } from 'jsonwebtoken-plus';
 import { Db } from 'mongodb';
 import { MongoChecker } from 'mongodb-extension';
 import { PasscodeRepository } from 'passcode-mongo';
