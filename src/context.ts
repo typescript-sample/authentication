@@ -19,6 +19,7 @@ import { useRepository } from 'signup-mongo';
 import { initStatus, Signup, SignupSender, SignupService, SignupTemplateConfig, Validator } from 'signup-service';
 import { v4 as uuidv4 } from 'uuid';
 import { createValidator } from 'xvalidators';
+import { MyProfileController, useMyProfileController } from './my-profile';
 import { UserController, useUserController } from './user';
 
 resources.createValidator = createValidator;
@@ -38,6 +39,7 @@ export interface ApplicationContext {
   authentication: AuthenticationController<User>;
   signup: SignupController<Signup>;
   password: PasswordController;
+  myprofile: MyProfileController;
   user: UserController;
 }
 export function useContext(db: Db, logger: Logger, midLogger: Middleware, conf: Config): ApplicationContext {
@@ -72,8 +74,9 @@ export function useContext(db: Db, logger: Logger, midLogger: Middleware, conf: 
   const password = new PasswordController(logger.error, passwordService);
 
   const user = useUserController(logger.error, db);
+  const myprofile = useMyProfileController(logger.error, db);
 
-  return { health, log, middleware, authentication, signup, password, user };
+  return { health, log, middleware, authentication, signup, password, myprofile, user };
 }
 const reg = /-/g;
 export function generateId(): string {

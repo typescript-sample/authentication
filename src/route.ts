@@ -19,6 +19,9 @@ export function route(app: Application, ctx: ApplicationContext): void {
   app.post('/password/change', ctx.password.change);
   app.put('/password/change', ctx.password.change);
 
+  app.get('/my-profile/:id', ctx.myprofile.getMyProfile);
+  app.get('/my-profile/:id/settings', ctx.myprofile.getMySettings);
+
   app.post('/users/search', ctx.user.search);
   app.get('/users/search', ctx.user.search);
   app.get('/users/:id', ctx.user.load);
