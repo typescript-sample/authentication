@@ -127,10 +127,20 @@ Nếu đường link đó không hoạt động, hãy sao chép đường link �
     }
   },
   mail: {
-    key: '',
+    provider: 'smtp',
     from: {
       name: 'Supporter',
       email: 'test@gmail.com'
+    },
+    key: '',
+    smtp: {
+      host: 'smtp.gmail.com',
+      port: 465,
+      secure: true,
+      auth: {
+        user: '',
+        pass: ''
+      }
     }
   }
 };
