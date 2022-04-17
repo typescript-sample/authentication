@@ -1,4 +1,4 @@
-import { Attributes, DateRange, Filter, Repository, Service } from 'onecore';
+import { Attributes, DateRange, Filter, ViewRepository, ViewService } from 'onecore';
 
 export interface UserFilter extends Filter {
   id?: string;
@@ -14,9 +14,9 @@ export interface User {
   phone?: string;
   dateOfBirth?: string;
 }
-export interface UserRepository extends Repository<User, string> {
+export interface UserRepository extends ViewRepository<User, string> {
 }
-export interface UserService extends Service<User, string, UserFilter> {
+export interface UserService extends ViewService<User, string> {
 }
 
 export const userModel: Attributes = {

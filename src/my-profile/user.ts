@@ -28,7 +28,6 @@ export interface Skill {
   hirable: boolean;
 }
 export interface UserSettings {
-  userId: string;
   language: string;
   dateFormat: string;
   dateTimeFormat: string;
@@ -66,8 +65,8 @@ export interface UserService extends Service<User, string, UserFilter> {
 export interface MyProfileService {
   getMyProfile(id: string): Promise<User | null>;
   getMySettings(id: string): Promise<UserSettings | null>;
-  // saveMySettings(id: string, settings: UserSettings): Promise<boolean>;
-  // saveMyProfile(id: string, user: User): Promise<boolean>;
+  saveMyProfile(user: User): Promise<number>;
+  saveMySettings(id: string, settings: UserSettings): Promise<number>;
 }
 
 export const skillsModel: Attributes = {

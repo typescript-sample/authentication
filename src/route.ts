@@ -21,12 +21,10 @@ export function route(app: Application, ctx: ApplicationContext): void {
 
   app.get('/my-profile/:id', ctx.myprofile.getMyProfile);
   app.get('/my-profile/:id/settings', ctx.myprofile.getMySettings);
+  app.patch('/my-profile', ctx.myprofile.saveMyProfile);
+  app.patch('/my-profile/:id/settings', ctx.myprofile.saveMySettings);
 
   app.post('/users/search', ctx.user.search);
   app.get('/users/search', ctx.user.search);
   app.get('/users/:id', ctx.user.load);
-  app.post('/users', ctx.user.create);
-  app.put('/users/:id', ctx.user.update);
-  app.patch('/users/:id', ctx.user.patch);
-  app.delete('/users/:id', ctx.user.delete);
 }

@@ -19,7 +19,7 @@ import { useRepository } from 'signup-mongo';
 import { initStatus, Signup, SignupSender, SignupService, SignupTemplateConfig, Validator } from 'signup-service';
 import { v4 as uuidv4 } from 'uuid';
 import { createValidator } from 'xvalidators';
-import { MyProfileController, useMyProfileController } from './my-profile';
+import { MyProfileController, useMyProfileController, UserSettings } from './my-profile';
 import { UserController, useUserController } from './user';
 
 resources.createValidator = createValidator;
@@ -31,6 +31,7 @@ export interface Config {
   signup: SignupTemplateConfig;
   password: PasswordTemplateConfig;
   mail: MailConfig;
+  settings: UserSettings;
 }
 export interface ApplicationContext {
   health: HealthController;
@@ -74,7 +75,7 @@ export function useContext(db: Db, logger: Logger, midLogger: Middleware, conf: 
   const password = new PasswordController(logger.error, passwordService);
 
   const user = useUserController(logger.error, db);
-  const myprofile = useMyProfileController(logger.error, db);
+  const myprofile = useMyProfileController(logger.error, db, conf.settings);
 
   return { health, log, middleware, authentication, signup, password, myprofile, user };
 }

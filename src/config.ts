@@ -2,7 +2,7 @@ export const config = {
   port: 8082,
   secure: false,
   allow: {
-    origin: 'http://localhost:3001',
+    origin: 'http://localhost:3000',
     credentials: 'true',
     methods: 'GET,PUT,POST,DELETE,OPTIONS,PATCH',
     headers: 'Access-Control-Allow-Headers, Authorization, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers'
@@ -22,8 +22,8 @@ export const config = {
     size: 'size'
   },
   mongo: {
-    uri: 'mongodb://localhost:27017',
-    db: 'authentication'
+    uri: 'mongodb+srv://dbUser:Demoaccount1@projectdemo.g0lah.mongodb.net',
+    db: 'masterdata'
   },
   secret: 'secret',
   auth: {
@@ -142,6 +142,24 @@ Nếu đường link đó không hoạt động, hãy sao chép đường link �
         pass: ''
       }
     }
+  },
+  settings: {
+    language: 'en-us',
+    dateFormat: 'dd/mm/yyyy',
+    timeFormat: 'hh:mm:ss',
+    notification: true,
+    dateTimeFormat: 'dd-mm-yyyy:hh:mm',
+    emailFeedUpdates: true,
+    notifyPostMentions: true,
+    emailPostMentions: false,
+    emailCommentsOfYourPosts: true,
+    notifyCommentsOfYourPosts: true,
+    showMyProfileInSpacesAroundMe: true,
+    emailEventInvitations: true,
+    emailWhenNewEventsAround: false,
+    showAroundMeResultsInMemberFeed: true,
+    followingListPublicOnMyProfile: true,
+    notifyWhenNewEventsAround: true
   }
 };
 
