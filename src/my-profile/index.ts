@@ -23,11 +23,11 @@ export class MyProfileManager implements MyProfileService {
     return this.repository.load(id).then(user => user && user.settings ? user.settings : clone(this.settings));
   }
   saveMyProfile(user: User): Promise<number> {
-    return this.repository.patch(user);
+      return this.repository.patch!(user);
   }
   saveMySettings(id: string, settings: UserSettings): Promise<number> {
     const user: any = {id, settings};
-    return this.repository.patch(user);
+    return this.repository.patch!(user);
   }
 }
 
