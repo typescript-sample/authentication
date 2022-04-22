@@ -15,7 +15,7 @@ export class UserManager extends ViewManager<User, string> implements UserServic
 }
 
 export function useUserController(log: Log, db: Db): UserController {
-  const builder = new SearchBuilder<User, UserFilter>(db, 'users', query, userModel);
+  const builder = new SearchBuilder<User, UserFilter>(db, 'user', query, userModel);
   const repository = new MongoUserRepository(db);
   return new UserController(log, builder.search, repository);
 }

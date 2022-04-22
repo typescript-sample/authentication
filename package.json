@@ -4,7 +4,7 @@
   "description": "",
   "main": "app",
   "scripts": {
-    "start": "nodemon --exec ts-node-dev src/app",
+    "start": "nodemon --exec npx ts-node-dev src/app",
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint -c .eslintrc.js --ext .ts src"
   },
@@ -24,6 +24,7 @@
     "dotenv": "^10.0.0",
     "express": "^4.17.2",
     "express-ext": "^0.1.17",
+    "google-storage": "^0.0.2",
     "jsonwebtoken": "^8.5.1",
     "jsonwebtoken-plus": "^0.0.6",
     "logger-core": "^0.3.0",

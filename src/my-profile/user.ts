@@ -22,10 +22,16 @@ export interface User {
   occupation?: string;
   company?: string;
   lookingFor?: string[];
+  uploadCover?: FileUploads;
 }
 export interface Skill {
   skill: string;
   hirable: boolean;
+}
+export interface FileUploads {
+  source: string;
+  type: string;
+  url: string;
 }
 export interface UserSettings {
   language: string;
@@ -67,6 +73,8 @@ export interface MyProfileService {
   getMySettings(id: string): Promise<UserSettings | null>;
   saveMyProfile(user: User): Promise<number>;
   saveMySettings(id: string, settings: UserSettings): Promise<number>;
+  uploadFile(id: string, source: string, type: string, name: string,
+    fileBuffer: Buffer): Promise<string>;
 }
 
 export const skillsModel: Attributes = {
@@ -77,6 +85,18 @@ export const skillsModel: Attributes = {
     type: 'boolean',
   }
 };
+export const fileUploadModel: Attributes = {
+  type: {
+    required: true
+  },
+  url: {
+    required: true
+  },
+  source: {
+    required: true
+  }
+};
+
 export const userSettingsModel: Attributes = {
   userId: {},
   language: {},
@@ -124,5 +144,9 @@ export const userModel: Attributes = {
   settings: {
     type: 'object',
     typeof: userSettingsModel,
+  },
+  uploadCover: {
+    type: 'primitives',
+    typeof: fileUploadModel
   }
 };

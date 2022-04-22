@@ -9,7 +9,7 @@ export function query(filter: UserFilter): FilterQuery<User> {
   }
   if (!isEmptyArray(filter.interests)) {
     const or: Object[] = [];
-    filter.interests.forEach((item) => {
+    filter?.interests?.forEach((item) => {
       or.push({ interests: new RegExp(`\\w*${item}\\w*`) });
     })
     q.$or = or;

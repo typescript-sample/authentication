@@ -8,7 +8,7 @@ export function route(app: Application, ctx: ApplicationContext): void {
   app.patch('/log', ctx.log.config);
   app.patch('/middleware', ctx.middleware.config);
 
-  app.post('/authentication/authenticate', parser.none(), ctx.authentication.authenticate);
+  app.post('/authenticate', parser.none(), ctx.authentication.authenticate);
   app.post('/signup/signup', ctx.signup.signup);
   app.post('/signup/verify/:userId/:code', ctx.signup.verify);
   app.get('/signup/verify/:userId/:code', ctx.signup.verify);
@@ -21,8 +21,11 @@ export function route(app: Application, ctx: ApplicationContext): void {
 
   app.get('/my-profile/:id', ctx.myprofile.getMyProfile);
   app.get('/my-profile/:id/settings', ctx.myprofile.getMySettings);
+  app.get('/my-profile/fetchImageUploaded/:id', ctx.myprofile.fetchImageUploaded);
   app.patch('/my-profile', ctx.myprofile.saveMyProfile);
   app.patch('/my-profile/:id/settings', ctx.myprofile.saveMySettings);
+  app.post('/my-profile/upload', parser.single('file'), ctx.myprofile.upload);
+
 
   app.post('/users/search', ctx.user.search);
   app.get('/users/search', ctx.user.search);
