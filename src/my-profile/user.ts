@@ -40,6 +40,14 @@ export interface UserSettings {
   timeFormat: string;
   notification: boolean;
 }
+
+export interface UploadInfo {
+  id: string;
+  source: string;
+  type: string;
+  name: string;
+  fileBuffer: Buffer
+}
 export interface Achievement {
   subject: string;
   description: string;
@@ -73,8 +81,8 @@ export interface MyProfileService {
   getMySettings(id: string): Promise<UserSettings | null>;
   saveMyProfile(user: User): Promise<number>;
   saveMySettings(id: string, settings: UserSettings): Promise<number>;
-  uploadFile(id: string, source: string, type: string, name: string,
-    fileBuffer: Buffer): Promise<string>;
+  uploadFile(uploadInfo: UploadInfo): Promise<boolean>;
+  deleteFile(url: string): Promise<boolean>;
 }
 
 export const skillsModel: Attributes = {

@@ -25,6 +25,7 @@ export function route(app: Application, ctx: ApplicationContext): void {
   app.patch('/my-profile', ctx.myprofile.saveMyProfile);
   app.patch('/my-profile/:id/settings', ctx.myprofile.saveMySettings);
   app.post('/my-profile/upload', parser.single('file'), ctx.myprofile.upload);
+  app.delete('/my-profile/delete', ctx.myprofile.delete);
 
 
   app.post('/users/search', ctx.user.search);

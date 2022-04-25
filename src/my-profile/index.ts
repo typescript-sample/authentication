@@ -3,7 +3,7 @@ import { Db } from 'mongodb';
 import { Log } from 'onecore';
 import { clone } from 'signup-mongo';
 import { MongoUserRepository } from './mongo-user-repository';
-import { MyProfileService, User, UserRepository, UserSettings } from './user';
+import { MyProfileService, UploadInfo, User, UserRepository, UserSettings } from './user';
 import { MyProfileController } from './user-controller';
 
 export * from './user';
@@ -11,7 +11,8 @@ export { MyProfileController };
 
 export class MyProfileManager implements MyProfileService {
   constructor(private repository: UserRepository, private settings: UserSettings, private googleService: GoogleStorageService) {
-    this.uploadFile=this.uploadFile.bind(this)
+    this.uploadFile = this.uploadFile.bind(this)
+    this.deleteFile = this.deleteFile.bind(this)
   }
   getMyProfile(id: string): Promise<User | null> {
     return this.repository.load(id).then(user => {
@@ -32,31 +33,41 @@ export class MyProfileManager implements MyProfileService {
     return this.repository.patch!(user);
   }
 
-  async uploadFile(id: string, source: string, type: string, name: string,
-    fileBuffer: Buffer): Promise<string> {
-    try {
-      const user = await this.repository.load(id)
-      const fileName = user?.uploadCover?.url.split("/") ?? []
-      const rs = await this.googleService.delete("media", fileName[fileName.length - 1] ?? '')
-      return this.googleService.upload("media", name, fileBuffer)
-        .then((result) => {
-          return this.repository.load(id).then((user) => {
-            if (user) {
-              user.uploadCover = { source, type, url: result };
-              return this.repository.update(user).then(() => result);
-            } else {
-              return "error";
-            }
-          });
-        })
-        .catch((err) => {
-          throw err;
+  async uploadFile({ id, source, type, name,
+    fileBuffer }: UploadInfo): Promise<boolean> {
+
+
+    const user = await this.repository.load(id)
+    const fileName = user?.uploadCover?.url.split("/") ?? ['']
+    if (fileName.length >= 1 && fileName[fileName.length - 1] !== '')
+      await this.googleService.delete("media", fileName[fileName.length - 1])
+    return this.googleService.upload("media", name, fileBuffer)
+      .then(async (result) => {
+        return this.repository.load(id).then(async (user) => {
+          if (user) {
+            user.uploadCover = { source, type, url: result };
+            const update = await this.repository.update(user) === 1 ? true : false;
+            return update
+          } else {
+            return false;
+          }
         });
+      })
+      ;
+  }
+
+  async deleteFile(url: string
+  ): Promise<boolean> {
+    const fileName = url.split("/") ?? ['']
+    try {
+      const rs = await this.googleService.delete("media", fileName[fileName.length - 1])
+      return rs
     }
     catch (error) {
       console.log(error)
-      return new Promise(resolve => resolve('error'))
+      return new Promise(resolve => resolve(false))
     }
+
   }
 }
 
