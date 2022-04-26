@@ -6,7 +6,7 @@ export interface UserFilter extends Filter {
   email?: string;
   phone?: string;
   dateOfBirth?: Date | DateRange;
-  interests?:string[];
+  interests?: string[];
 }
 export interface User {
   id?: string;
@@ -37,7 +37,7 @@ export const userModel: Attributes = {
   dateOfBirth: {
     column: 'date_of_birth',
   },
-  interests:{
-    type:'strings'
+  interests: {
+    type: 'strings'
   }
 };

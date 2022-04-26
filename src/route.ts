@@ -22,10 +22,13 @@ export function route(app: Application, ctx: ApplicationContext): void {
   app.get('/my-profile/:id', ctx.myprofile.getMyProfile);
   app.get('/my-profile/:id/settings', ctx.myprofile.getMySettings);
   app.get('/my-profile/fetchImageUploaded/:id', ctx.myprofile.fetchImageUploaded);
+  app.get('/my-profile/fetchImageGalleryUploaded/:id', ctx.myprofile.fetchImageGalleryUploaded);
   app.patch('/my-profile', ctx.myprofile.saveMyProfile);
   app.patch('/my-profile/:id/settings', ctx.myprofile.saveMySettings);
-  app.post('/my-profile/upload', parser.single('file'), ctx.myprofile.upload);
-  app.delete('/my-profile/delete', ctx.myprofile.delete);
+  app.post('/my-profile/upload', parser.single('file'), ctx.myprofile.uploadCover);
+  app.post('/my-profile/uploadGallery', parser.single('file'), ctx.myprofile.uploadGallery);
+  app.patch('/my-profile/uploadGallery', ctx.myprofile.patchGallery);
+  app.delete('/my-profile/uploadGallery', ctx.myprofile.deleteGallery);
 
 
   app.post('/users/search', ctx.user.search);

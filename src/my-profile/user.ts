@@ -22,7 +22,8 @@ export interface User {
   occupation?: string;
   company?: string;
   lookingFor?: string[];
-  uploadCover?: FileUploads;
+  uploadCover?: FileUploadsCover;
+  uploadGallery?: FileUploads[];
 }
 export interface Skill {
   skill: string;
@@ -33,6 +34,12 @@ export interface FileUploads {
   type: string;
   url: string;
 }
+
+export interface FileUploadsCover {
+  source: string;
+  url: string;
+}
+
 export interface UserSettings {
   language: string;
   dateFormat: string;
@@ -44,9 +51,12 @@ export interface UserSettings {
 export interface UploadInfo {
   id: string;
   source: string;
-  type: string;
   name: string;
   fileBuffer: Buffer
+}
+
+export interface UploadGallery extends UploadInfo {
+  type: string;
 }
 export interface Achievement {
   subject: string;
@@ -71,6 +81,7 @@ export interface UserFilter extends Filter {
   skills: Skill[];
   achievements: Achievement[];
   settings: UserSettings;
+  uploadGallery?: FileUploads[];
 }
 export interface UserRepository extends Repository<User, string> {
 }
@@ -81,8 +92,10 @@ export interface MyProfileService {
   getMySettings(id: string): Promise<UserSettings | null>;
   saveMyProfile(user: User): Promise<number>;
   saveMySettings(id: string, settings: UserSettings): Promise<number>;
-  uploadFile(uploadInfo: UploadInfo): Promise<boolean>;
-  deleteFile(url: string): Promise<boolean>;
+  uploadFileCover(uploadInfo: UploadInfo): Promise<boolean>;
+  uploadFileGallery(uploadGallery: UploadGallery): Promise<boolean>
+  patchDataGallery(id: string, data: FileUploads[]): Promise<boolean>
+  deleteDataGallery(id: string, data: string): Promise<boolean>
 }
 
 export const skillsModel: Attributes = {
@@ -94,8 +107,16 @@ export const skillsModel: Attributes = {
   }
 };
 export const fileUploadModel: Attributes = {
-  type: {
+  url: {
     required: true
+  },
+  source: {
+    required: true
+  }
+};
+
+export const fileUploadGalleryModel: Attributes = {
+  type: {
   },
   url: {
     required: true
@@ -154,6 +175,10 @@ export const userModel: Attributes = {
     typeof: userSettingsModel,
   },
   uploadCover: {
+    type: 'primitives',
+    typeof: fileUploadModel
+  },
+  uploadGallery: {
     type: 'primitives',
     typeof: fileUploadModel
   }

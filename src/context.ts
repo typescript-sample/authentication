@@ -21,8 +21,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { createValidator } from 'xvalidators';
 import { MyProfileController, useMyProfileController, UserSettings } from './my-profile';
 import { UserController, useUserController } from './user';
-import { GoogleStorageService, StorageConfig, map } from 'google-storage';
 import { Storage } from '@google-cloud/storage';
+import { GoogleStorageService, map, StorageConfig } from 'google-storage';
 resources.createValidator = createValidator;
 
 export interface Config {

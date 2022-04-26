@@ -8,10 +8,10 @@ export function query(filter: UserFilter): FilterQuery<User> {
     q.email = new RegExp(`^${filter.email}`);
   }
   if (!isEmptyArray(filter.interests)) {
-    const or: Object[] = [];
+    const or: any[] = [];
     filter?.interests?.forEach((item) => {
       or.push({ interests: new RegExp(`\\w*${item}\\w*`) });
-    })
+    });
     q.$or = or;
   }
   if (!isEmpty(filter.q)) {
@@ -19,7 +19,7 @@ export function query(filter: UserFilter): FilterQuery<User> {
     const o2 = { username: new RegExp(`\\w*${filter.q}\\w*`) };
     const o3 = { phone: new RegExp(`\\w*${filter.q}\\w*`) };
     const o4 = { interests: new RegExp(`\\w*${filter.q}\\w*`) };
-    const or = [o1, o2, o3,o4];
+    const or = [o1, o2, o3, o4];
     q.$or = or;
   }
   console.log(JSON.stringify(q));

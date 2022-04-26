@@ -33,7 +33,7 @@
     "mongodb-extension": "^0.1.9",
     "multer": "^1.4.4",
     "nodemailer": "^6.7.3",
-    "onecore": "^0.0.28",
+    "onecore": "^0.0.30",
     "passcode-mongo": "^0.0.3",
     "password-express": "^0.0.2",
     "password-mongo": "^0.0.1",
