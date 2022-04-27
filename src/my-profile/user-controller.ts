@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { buildAndCheckId, handleError, minimize, respondModel } from 'express-ext';
 import { UserSettings } from 'my-profile';
 import { Log } from 'onecore';
-import { MyProfileService, UploadGallery, UploadInfo } from './user';
+import { MyProfileService, UploadData, UploadGallery } from './user';
 
 export class MyProfileController {
   constructor(private log: Log, private service: MyProfileService) {
@@ -11,11 +11,11 @@ export class MyProfileController {
     this.saveMyProfile = this.saveMyProfile.bind(this);
     this.saveMySettings = this.saveMySettings.bind(this);
     this.uploadCover = this.uploadCover.bind(this);
-    this.fetchImageUploaded = this.fetchImageUploaded.bind(this)
-    this.fetchImageGalleryUploaded = this.fetchImageGalleryUploaded.bind(this)
-    this.patchGallery = this.patchGallery.bind(this)
-    this.uploadGallery = this.uploadGallery.bind(this)
-    this.deleteGallery = this.deleteGallery.bind(this)
+    this.fetchUploadedImage = this.fetchUploadedImage.bind(this);
+    this.fetchUploadedGallery = this.fetchUploadedGallery.bind(this);
+    this.patchGallery = this.patchGallery.bind(this);
+    this.uploadGallery = this.uploadGallery.bind(this);
+    this.deleteGallery = this.deleteGallery.bind(this);
   }
   getMyProfile(req: Request, res: Response) {
     const id = buildAndCheckId<string>(req, res);
@@ -80,48 +80,46 @@ export class MyProfileController {
   }
 
   uploadCover(req: Request, res: Response) {
-    if (!req || !req.file) return
-    const fileName = req.file.originalname;
-    const fileBuffer = req.file.buffer;
-    const fileType = req.file.mimetype;
-    const type = fileType.split('/')[0];
-    const { id, source } = req.body;
-    const name = `${id.toString()}_` + fileName;
-    const uploadInfo: UploadInfo = {
-      id, source, name, fileBuffer
+    if (!req || !req.file) {
+      return;
     }
+    const fileName = req.file.originalname;
+    const data = req.file.buffer;
+    const { id } = req.body;
+    const uploadInfo: UploadData = {
+      id, name: fileName, data
+    };
     if (!uploadInfo) {
       res.status(400).send('data cannot be empty');
     } else {
-      this.service.uploadFileCover(uploadInfo).then(result =>
+      this.service.uploadCoverImage(uploadInfo).then(result =>
         res.status(200).json(result)
       ).
         catch(e => handleError(e, res, this.log));
     }
   }
-
   uploadGallery(req: Request, res: Response) {
-    if (!req || !req.file) return
+    if (!req || !req.file) {
+      return;
+    }
     const fileName = req.file.originalname;
-    const fileBuffer = req.file.buffer;
+    const data = req.file.buffer;
     const fileType = req.file.mimetype;
     const type = fileType.split('/')[0];
     const { id, source } = req.body;
-    const name = `${id.toString()}_` + fileName;
     const upload: UploadGallery = {
-      id, source, name, fileBuffer, type
-    }
+      id, source, name: fileName, data, type
+    };
     if (!upload) {
       res.status(400).send('data cannot be empty');
     } else {
-      this.service.uploadFileGallery(upload).then(result =>
+      this.service.uploadGalleryFile(upload).then(result =>
         res.status(200).json(result)
       ).
         catch(e => handleError(e, res, this.log));
     }
   }
-
-  fetchImageUploaded(req: Request, res: Response) {
+  fetchUploadedImage(req: Request, res: Response) {
     const id = buildAndCheckId<string>(req, res);
     if (id) {
       this.service.getMyProfile(id)
@@ -129,31 +127,28 @@ export class MyProfileController {
         .catch(err => handleError(err, res, this.log));
     }
   }
-
-  fetchImageGalleryUploaded(req: Request, res: Response) {
+  fetchUploadedGallery(req: Request, res: Response) {
     const id = buildAndCheckId<string>(req, res);
     if (id) {
       this.service.getMyProfile(id)
-        .then(user => respondModel(minimize(user?.uploadGallery ?? []), res))
+        .then(user => respondModel(minimize(user?.gallery ?? []), res))
         .catch(err => handleError(err, res, this.log));
     }
   }
-
   patchGallery(req: Request, res: Response) {
     const { userId, data } = req.body;
     if (userId) {
-      this.service.patchDataGallery(userId, data)
+      this.service.patchGallery(userId, data)
         .then(result =>
           res.status(200).json(result))
         .catch(err => handleError(err, res, this.log));
     }
   }
-
   deleteGallery(req: Request, res: Response) {
     const id = req.query.userId?.toString();
-    const url = req.query.url?.toString()
+    const url = req.query.url?.toString();
     if (id && url) {
-      this.service.deleteDataGallery(id, url)
+      this.service.deleteGalleryData(id, url)
         .then(result =>
           res.status(200).json(result))
         .catch(err => handleError(err, res, this.log));

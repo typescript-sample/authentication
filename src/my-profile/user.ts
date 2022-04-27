@@ -12,8 +12,8 @@ export interface User {
   settings: UserSettings;
 
   title?: string;
-  image?: string;
-  coverImage?: string;
+  imageURL?: string;
+  coverURL?: string;
   nationality?: string;
   alternativeEmail?: string;
   address?: string;
@@ -23,40 +23,18 @@ export interface User {
   company?: string;
   lookingFor?: string[];
   uploadCover?: FileUploadsCover;
-  uploadGallery?: FileUploads[];
+  gallery?: UploadInfo[];
 }
 export interface Skill {
   skill: string;
   hirable: boolean;
 }
-export interface FileUploads {
-  source: string;
-  type: string;
-  url: string;
-}
-
-export interface FileUploadsCover {
-  source: string;
-  url: string;
-}
-
 export interface UserSettings {
   language: string;
   dateFormat: string;
   dateTimeFormat: string;
   timeFormat: string;
   notification: boolean;
-}
-
-export interface UploadInfo {
-  id: string;
-  source: string;
-  name: string;
-  fileBuffer: Buffer
-}
-
-export interface UploadGallery extends UploadInfo {
-  type: string;
 }
 export interface Achievement {
   subject: string;
@@ -71,6 +49,27 @@ export interface Appreciation {
   description: string;
 }
 
+export interface UploadInfo {
+  source?: string;
+  type?: string;
+  url: string;
+}
+export interface FileUploadsCover {
+  source: string;
+  url: string;
+}
+export interface UploadData {
+  id: string;
+  name: string;
+  data: Buffer;
+}
+export interface UploadGallery {
+  id: string;
+  source?: string;
+  name: string;
+  data: Buffer;
+  type: string;
+}
 export interface UserFilter extends Filter {
   id: string;
   username: string;
@@ -80,22 +79,18 @@ export interface UserFilter extends Filter {
   interests: string[];
   skills: Skill[];
   achievements: Achievement[];
-  settings: UserSettings;
-  uploadGallery?: FileUploads[];
 }
 export interface UserRepository extends Repository<User, string> {
-}
-export interface UserService extends Service<User, string, UserFilter> {
 }
 export interface MyProfileService {
   getMyProfile(id: string): Promise<User | null>;
   getMySettings(id: string): Promise<UserSettings | null>;
   saveMyProfile(user: User): Promise<number>;
   saveMySettings(id: string, settings: UserSettings): Promise<number>;
-  uploadFileCover(uploadInfo: UploadInfo): Promise<boolean>;
-  uploadFileGallery(uploadGallery: UploadGallery): Promise<boolean>
-  patchDataGallery(id: string, data: FileUploads[]): Promise<boolean>
-  deleteDataGallery(id: string, data: string): Promise<boolean>
+  uploadCoverImage(uploadInfo: UploadData): Promise<boolean>;
+  uploadGalleryFile(uploadGallery: UploadGallery): Promise<boolean>;
+  patchGallery(id: string, data: UploadInfo[]): Promise<boolean>;
+  deleteGalleryData(id: string, url: string): Promise<boolean>;
 }
 
 export const skillsModel: Attributes = {

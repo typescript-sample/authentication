@@ -1,21 +1,31 @@
-import { GoogleStorageService } from 'google-storage';
+import { DeleteFile, StorageRepository } from 'google-storage';
 import { Db } from 'mongodb';
 import { Log } from 'onecore';
 import { clone } from 'signup-mongo';
 import { MongoUserRepository } from './mongo-user-repository';
-import { FileUploads, MyProfileService, UploadGallery, UploadInfo, User, UserRepository, UserSettings } from './user';
+import { MyProfileService, UploadData, UploadGallery, UploadInfo, User, UserRepository, UserSettings } from './user';
 import { MyProfileController } from './user-controller';
 
 export * from './user';
 export { MyProfileController };
 
+export function useMyProfileController(log: Log, db: Db, settings: UserSettings, config: StorageConf, storage: StorageRepository, deleteFile: DeleteFile): MyProfileController {
+  const repository = new MongoUserRepository(db);
+  const service = new MyProfileManager(repository, settings, config, storage, deleteFile);
+  return new MyProfileController(log, service);
+}
+
+export interface StorageConf {
+  avatar: string;
+  cover: string;
+  gallery: string;
+}
 export class MyProfileManager implements MyProfileService {
-  constructor(private repository: UserRepository, private settings: UserSettings, private googleService: GoogleStorageService) {
-    this.uploadFileCover = this.uploadFileCover.bind(this)
-    this.deleteFile = this.deleteFile.bind(this)
-    this.uploadFileGallery = this.uploadFileGallery.bind(this)
-    this.patchDataGallery = this.patchDataGallery.bind(this)
-    this.deleteDataGallery = this.deleteDataGallery.bind(this)
+  constructor(private repository: UserRepository, private settings: UserSettings, private config: StorageConf, private storage: StorageRepository, private deleteFile: DeleteFile) {
+    this.uploadCoverImage = this.uploadCoverImage.bind(this);
+    this.uploadGalleryFile = this.uploadGalleryFile.bind(this);
+    this.patchGallery = this.patchGallery.bind(this);
+    this.deleteGalleryData = this.deleteGalleryData.bind(this);
   }
   getMyProfile(id: string): Promise<User | null> {
     return this.repository.load(id).then(user => {
@@ -36,77 +46,64 @@ export class MyProfileManager implements MyProfileService {
     return this.repository.patch(user);
   }
 
-  async deleteFile(url: string): Promise<boolean> {
-    const fileName = url.split('/') ?? [];
-    try {
-      return await this.googleService.delete(fileName[fileName.length - 2] ?? '', fileName[fileName.length - 1] ?? '');
-    } catch (error) {
-      return new Promise(resolve => resolve(false));
+  async uploadCoverImage(upload: UploadData): Promise<boolean> {
+    const user = await this.repository.load(upload.id);
+    if (!user) {
+      return false;
     }
-  }
-
-  async uploadFileCover({ id, source, name,
-    fileBuffer }: UploadInfo): Promise<boolean> {
-    try {
-      const user = await this.repository.load(id);
-      if (!user) {
-        return false;
+    if (user.coverURL && user.coverURL.length > 0) {
+      if (shouldDelete(user.coverURL, user.gallery)) {
+        await this.deleteFile(this.storage.delete, user.coverURL);
       }
-      await this.deleteFile(user.uploadCover?.url ?? '')
-      const result = await this.googleService.upload('coverPhoto', name, fileBuffer);
-      user.uploadCover = { source, url: result };
-      const update = await this.repository.update(user);
-      return update === 1 ? true : false;
-    } catch (error) {
-      console.log(error);
-      return new Promise(resolve => resolve(false));
     }
+    const name = `${upload.id.toString()}_${upload.name}`;
+    const url = await this.storage.upload(upload.data, name, this.config.cover);
+    user.coverURL = url;
+    const res = await this.repository.patch(user);
+    return res >= 1 ? true : false;
   }
-  async uploadFileGallery({ id, source, name, type,
-    fileBuffer }: UploadGallery): Promise<boolean> {
-    try {
-      const user = await this.repository.load(id);
-      if (!user) {
-        return false;
-      }
-      const result = await this.googleService.upload('gallery', name, fileBuffer);
-      user.uploadGallery = user.uploadGallery ? user.uploadGallery : []
-      user.uploadGallery.push({ source, url: result, type });
-      const update = await this.repository.update(user);
-      return update === 1 ? true : false;
-    } catch (error) {
-      console.log(error);
-      return new Promise(resolve => resolve(false));
-    }
-  }
-
-  async patchDataGallery(id: string, data: FileUploads[]): Promise<boolean> {
+  async uploadGalleryFile({ id, source, name, type, data }: UploadGallery): Promise<boolean> {
     const user = await this.repository.load(id);
     if (!user) {
       return false;
     }
-    user.uploadGallery = data;
-    const update = await this.repository.update(user);
-    return update === 1 ? true : false;
+    const url = await this.storage.upload(data, name, this.config.gallery);
+    user.gallery = user.gallery ? user.gallery : [];
+    user.gallery.push({ source, url, type });
+    const res = await this.repository.patch(user);
+    return res >= 1 ? true : false;
   }
-
-  async deleteDataGallery(id: string, url: string): Promise<boolean> {
+  async patchGallery(id: string, data: UploadInfo[]): Promise<boolean> {
     const user = await this.repository.load(id);
     if (!user) {
       return false;
     }
-    user.uploadGallery = user.uploadGallery?.filter(upload => upload.url !== url)
-    const update = await this.repository.update(user);
-    return update === 1 ? true : false;
+    user.gallery = data;
+    const res = await this.repository.patch(user);
+    return res >= 1 ? true : false;
   }
-
+  async deleteGalleryData(id: string, url: string): Promise<boolean> {
+    const user = await this.repository.load(id);
+    if (!user) {
+      return false;
+    }
+    if (url !== user.imageURL && url !== user.coverURL) {
+      await this.deleteFile(this.storage.delete, url);
+    }
+    user.gallery = user.gallery?.filter(file => file.url !== url);
+    const res = await this.repository.patch(user);
+    return res >= 1 ? true : false;
+  }
 }
 
-export function useMyProfileService(db: Db, settings: UserSettings, googleService: GoogleStorageService): MyProfileService {
-  const repository = new MongoUserRepository(db);
-  return new MyProfileManager(repository, settings, googleService);
-}
-
-export function useMyProfileController(log: Log, db: Db, settings: UserSettings, googleService: GoogleStorageService): MyProfileController {
-  return new MyProfileController(log, useMyProfileService(db, settings, googleService));
+function shouldDelete(url: string, files?: UploadInfo[]): boolean {
+  if (!files || files.length === 0) {
+    return true;
+  }
+  for (const file of files) {
+    if (url === file.url) {
+      return false;
+    }
+  }
+  return true;
 }

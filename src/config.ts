@@ -143,6 +143,12 @@ Nếu đường link đó không hoạt động, hãy sao chép đường link �
       }
     }
   },
+  bucket: 'go-firestore-rest-api.appspot.com',
+  storage: {
+    avatar: 'avatar',
+    cover: 'cover',
+    gallery: 'gallery'
+  },
   settings: {
     language: 'en-us',
     dateFormat: 'dd/mm/yyyy',
