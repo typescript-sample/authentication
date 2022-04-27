@@ -8,7 +8,6 @@ import {
 import { UserSettings } from "my-profile";
 import { Log } from "onecore";
 import { MyProfileService, UploadData, UploadGallery } from "./user";
-const shortid = require("shortid");
 export class MyProfileController {
   constructor(
     private log: Log,

@@ -90,11 +90,11 @@ export class MyProfileManager implements MyProfileService {
         await this.deleteFile(this.storage.delete, user.coverURL);
       }
     }
-
+    let fileName: string = removeFileExtension(upload.name);
     try {
       const url = await this.storage.upload(
         upload.data,
-        upload.name,
+        fileName,
         this.config.cover
       );
       user.coverURL = url;
@@ -115,10 +115,11 @@ export class MyProfileManager implements MyProfileService {
         await this.deleteFile(this.storage.delete, user.avatarUrl);
       }
     }
+    let fileName: string = removeFileExtension(upload.name);
     try {
       const url = await this.storage.upload(
         upload.data,
-        upload.name,
+        fileName,
         this.config.avatar
       );
       user.avatarUrl = url;
@@ -140,10 +141,7 @@ export class MyProfileManager implements MyProfileService {
     if (!user) {
       return false;
     }
-    let fileName: string = name;
-
-    const idx: number = name.lastIndexOf(".");
-    fileName = name.substring(0, idx);
+    let fileName: string = removeFileExtension(name);
     if (checkDuplicateFile(user.gallery || [], fileName))
       fileName += this.generateId;
     const url = await this.storage.upload(data, fileName, this.config.gallery);
@@ -177,10 +175,15 @@ export class MyProfileManager implements MyProfileService {
   }
 }
 
+function removeFileExtension(name: string): string {
+  const idx: number = name.lastIndexOf(".");
+  return name.substring(0, idx);
+}
+
 function checkDuplicateFile(data: UploadInfo[], url: string): boolean {
   const rs = data.find((upload) => upload.url === url);
   return rs ? true : false;
-} 
+}
 
 function shouldDelete(url: string, files?: UploadInfo[]): boolean {
   if (!files || files.length === 0) {
