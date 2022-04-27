@@ -1,4 +1,4 @@
-import { Attributes, DateRange, Filter, Repository, Service } from 'onecore';
+import { Attributes, DateRange, Filter, Repository } from 'onecore';
 
 export interface User {
   id: string;
@@ -10,7 +10,7 @@ export interface User {
   skills: Skill[];
   achievements: Achievement[];
   settings: UserSettings;
-  avatarUrl?:string;
+  avatarUrl?: string;
   title?: string;
   imageURL?: string;
   coverURL?: string;
@@ -87,7 +87,7 @@ export interface MyProfileService {
   saveMyProfile(user: User): Promise<number>;
   saveMySettings(id: string, settings: UserSettings): Promise<number>;
   uploadCoverImage(uploadInfo: UploadData): Promise<boolean>;
-  uploadAvatarImage(uploadInfo: UploadData): Promise<boolean>;
+  uploadImage(uploadInfo: UploadData): Promise<boolean>;
   uploadGalleryFile(uploadGallery: UploadGallery): Promise<boolean>;
   updateGallery(id: string, data: UploadInfo[]): Promise<boolean>;
   deleteGalleryData(id: string, url: string): Promise<boolean>;

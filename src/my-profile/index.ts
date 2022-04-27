@@ -1,44 +1,21 @@
-import { DeleteFile, StorageRepository } from "google-storage";
-import { Db } from "mongodb";
-import { Log } from "onecore";
-import { clone } from "signup-mongo";
-import { MongoUserRepository } from "./mongo-user-repository";
-import {
-  MyProfileService,
-  UploadData,
-  UploadGallery,
-  UploadInfo,
-  User,
-  UserRepository,
-  UserSettings,
-} from "./user";
-import { MyProfileController } from "./user-controller";
-export * from "./user";
+import { StorageRepository } from 'google-storage';
+import { Db } from 'mongodb';
+import { Delete, Log, UrlBuild } from 'onecore';
+import { clone } from 'signup-mongo';
+import { MongoUserRepository } from './mongo-user-repository';
+import { MyProfileService, UploadData, UploadGallery, UploadInfo, User, UserRepository, UserSettings } from './user';
+import { MyProfileController } from './user-controller';
+export * from './user';
 export { MyProfileController };
 
-export function useMyProfileController(
-  log: Log,
-  db: Db,
-  settings: UserSettings,
-  config: StorageConf,
-  storage: StorageRepository,
-  deleteFile: DeleteFile,
-  generateId: () => string
-): MyProfileController {
+export function useMyProfileController(log: Log, db: Db, settings: UserSettings, config: StorageConf, storage: StorageRepository, deleteFile: Delete, generateId: () => string, buildUrl: UrlBuild): MyProfileController {
   const repository = new MongoUserRepository(db);
-  const service = new MyProfileManager(
-    repository,
-    settings,
-    config,
-    storage,
-    deleteFile,
-    generateId
-  );
+  const service = new MyProfileManager(repository, settings, config, storage, deleteFile, generateId, buildUrl);
   return new MyProfileController(log, service, generateId);
 }
 
 export interface StorageConf {
-  avatar: string;
+  image: string;
   cover: string;
   gallery: string;
 }
@@ -48,19 +25,20 @@ export class MyProfileManager implements MyProfileService {
     private settings: UserSettings,
     private config: StorageConf,
     private storage: StorageRepository,
-    private deleteFile: DeleteFile,
-    private generateId: () => string
+    private deleteFile: Delete,
+    private generateId: () => string,
+    private buildUrl: UrlBuild
   ) {
     this.uploadCoverImage = this.uploadCoverImage.bind(this);
     this.uploadGalleryFile = this.uploadGalleryFile.bind(this);
     this.updateGallery = this.updateGallery.bind(this);
     this.deleteGalleryData = this.deleteGalleryData.bind(this);
-    this.uploadAvatarImage = this.uploadAvatarImage.bind(this);
+    this.uploadImage = this.uploadImage.bind(this);
   }
   getMyProfile(id: string): Promise<User | null> {
     return this.repository.load(id).then((user) => {
       if (user) {
-        delete (user as any)["settings"];
+        delete (user as any)['settings'];
       }
       return user;
     });
@@ -76,8 +54,7 @@ export class MyProfileManager implements MyProfileService {
     return this.repository.patch(user);
   }
   saveMySettings(id: string, settings: UserSettings): Promise<number> {
-    const user: any = { id, settings };
-    return this.repository.patch(user);
+    return this.repository.patch({ id, settings });
   }
 
   async uploadCoverImage(upload: UploadData): Promise<boolean> {
@@ -90,22 +67,13 @@ export class MyProfileManager implements MyProfileService {
         await this.deleteFile(this.storage.delete, user.coverURL);
       }
     }
-    let fileName: string = removeFileExtension(upload.name);
-    try {
-      const url = await this.storage.upload(
-        upload.data,
-        fileName,
-        this.config.cover
-      );
-      user.coverURL = url;
-    } catch (error) {
-      console.log(error);
-    }
-    const res = await this.repository.patch(user);
+    const url = await this.storage.upload(upload.data, upload.name, this.config.cover);
+    user.coverURL = url;
+    const res = await this.repository.patch({id: upload.id, coverURL: user.coverURL});
     return res >= 1 ? true : false;
   }
 
-  async uploadAvatarImage(upload: UploadData): Promise<boolean> {
+  async uploadImage(upload: UploadData): Promise<boolean> {
     const user = await this.repository.load(upload.id);
     if (!user) {
       return false;
@@ -115,39 +83,26 @@ export class MyProfileManager implements MyProfileService {
         await this.deleteFile(this.storage.delete, user.avatarUrl);
       }
     }
-    let fileName: string = removeFileExtension(upload.name);
-    try {
-      const url = await this.storage.upload(
-        upload.data,
-        fileName,
-        this.config.avatar
-      );
-      user.avatarUrl = url;
-    } catch (error) {
-      console.log(error);
-    }
-    const res = await this.repository.patch(user);
+    const url = await this.storage.upload(upload.data, upload.name, this.config.image);
+    user.avatarUrl = url;
+    const res = await this.repository.patch({id: upload.id, avatarUrl: user.avatarUrl});
     return res >= 1 ? true : false;
   }
 
-  async uploadGalleryFile({
-    id,
-    source,
-    name,
-    type,
-    data,
-  }: UploadGallery): Promise<boolean> {
+  async uploadGalleryFile({id, source, name, type, data}: UploadGallery): Promise<boolean> {
     const user = await this.repository.load(id);
     if (!user) {
       return false;
     }
-    let fileName: string = removeFileExtension(name);
-    if (checkDuplicateFile(user.gallery || [], fileName))
-      fileName += this.generateId;
+    let fileName: string = name;
+    const newUrl = this.buildUrl(fileName, this.config.gallery);
+    if (checkDuplicateFile(user.gallery || [], newUrl)) {
+      fileName = appendFileExtension(removeFileExtension(name) + '_' + this.generateId(), getFileExtension(name));
+    }
     const url = await this.storage.upload(data, fileName, this.config.gallery);
     user.gallery = user.gallery ? user.gallery : [];
     user.gallery.push({ source, url, type });
-    const res = await this.repository.patch(user);
+    const res = await this.repository.patch({id, gallery: user.gallery});
     return res >= 1 ? true : false;
   }
 
@@ -156,9 +111,7 @@ export class MyProfileManager implements MyProfileService {
     if (!user) {
       return false;
     }
-
-    user.gallery = data;
-    const res = await this.repository.patch(user);
+    const res = await this.repository.patch({id, gallery: data});
     return res >= 1 ? true : false;
   }
   async deleteGalleryData(id: string, url: string): Promise<boolean> {
@@ -170,16 +123,30 @@ export class MyProfileManager implements MyProfileService {
       await this.deleteFile(this.storage.delete, url);
     }
     user.gallery = user.gallery?.filter((file) => file.url !== url);
-    const res = await this.repository.patch(user);
+    const res = await this.repository.patch({id, gallery: user.gallery});
     return res >= 1 ? true : false;
   }
 }
 
 function removeFileExtension(name: string): string {
-  const idx: number = name.lastIndexOf(".");
+  const idx: number = name.lastIndexOf('.');
   return name.substring(0, idx);
 }
-
+function appendFileExtension(s: string, ext: string): string {
+  if (ext.length > 0) {
+    return s + '.' + ext;
+  } else {
+    return s;
+  }
+}
+function getFileExtension(name: string): string {
+  const idx: number = name.lastIndexOf('.');
+  if (idx >= 0) {
+    return name.substring(idx);
+  } else {
+    return '';
+  }
+}
 function checkDuplicateFile(data: UploadInfo[], url: string): boolean {
   const rs = data.find((upload) => upload.url === url);
   return rs ? true : false;
