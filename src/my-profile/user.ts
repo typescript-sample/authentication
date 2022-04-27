@@ -10,7 +10,7 @@ export interface User {
   skills: Skill[];
   achievements: Achievement[];
   settings: UserSettings;
-
+  avatarUrl?:string;
   title?: string;
   imageURL?: string;
   coverURL?: string;
@@ -22,7 +22,6 @@ export interface User {
   occupation?: string;
   company?: string;
   lookingFor?: string[];
-  uploadCover?: FileUploadsCover;
   gallery?: UploadInfo[];
 }
 export interface Skill {
@@ -88,8 +87,9 @@ export interface MyProfileService {
   saveMyProfile(user: User): Promise<number>;
   saveMySettings(id: string, settings: UserSettings): Promise<number>;
   uploadCoverImage(uploadInfo: UploadData): Promise<boolean>;
+  uploadAvatarImage(uploadInfo: UploadData): Promise<boolean>;
   uploadGalleryFile(uploadGallery: UploadGallery): Promise<boolean>;
-  patchGallery(id: string, data: UploadInfo[]): Promise<boolean>;
+  updateGallery(id: string, data: UploadInfo[]): Promise<boolean>;
   deleteGalleryData(id: string, url: string): Promise<boolean>;
 }
 

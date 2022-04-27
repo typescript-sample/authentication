@@ -24,7 +24,7 @@ import { createValidator } from 'xvalidators';
 import { MyProfileController, StorageConf, useMyProfileController, UserSettings } from './my-profile';
 import { UserController, useUserController } from './user';
 resources.createValidator = createValidator;
-
+const shortid = require('shortid');
 export interface Config {
   cookie?: boolean;
   secret: string;
@@ -84,7 +84,7 @@ export function useContext(db: Db, logger: Logger, midLogger: Middleware, conf: 
   const storage = new Storage();
   const bucket = storage.bucket(conf.bucket);
   const storageService = new GoogleStorageService(bucket, storageConfig, map);
-  const myprofile = useMyProfileController(logger.error, db, conf.settings, conf.storage, storageService, deleteFile);
+  const myprofile = useMyProfileController(logger.error, db, conf.settings, conf.storage, storageService, deleteFile,generateShortId);
   return { health, log, middleware, authentication, signup, password, myprofile, user };
 }
 const reg = /-/g;
@@ -92,6 +92,11 @@ export function generateId(): string {
   const s = uuidv4();
   return s.replace(reg, '');
 }
+
+export function generateShortId():string{
+  return shortid.generate()
+}
+
 export function hasTwoFactors(userId: string): Promise<boolean> {
   return Promise.resolve(false);
 }

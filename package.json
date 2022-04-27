@@ -41,6 +41,7 @@
     "password-service": "^0.0.2",
     "reflectx": "^0.0.10",
     "sendgrid-plus": "^0.0.2",
+    "shortid": "^2.2.16",
     "signup-express": "^0.0.1",
     "signup-mongo": "^0.0.1",
     "signup-service": "^0.0.4",
