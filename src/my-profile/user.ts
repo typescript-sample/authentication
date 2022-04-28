@@ -86,11 +86,11 @@ export interface MyProfileService {
   getMySettings(id: string): Promise<UserSettings | null>;
   saveMyProfile(user: User): Promise<number>;
   saveMySettings(id: string, settings: UserSettings): Promise<number>;
-  uploadCoverImage(uploadInfo: UploadData): Promise<boolean>;
-  uploadImage(uploadInfo: UploadData): Promise<boolean>;
+  uploadCoverImage(id: string, name: string, data: string | Buffer): Promise<boolean>;
+  uploadImage(id: string, name: string, data: string | Buffer): Promise<boolean>;
   uploadGalleryFile(uploadGallery: UploadGallery): Promise<boolean>;
   updateGallery(id: string, data: UploadInfo[]): Promise<boolean>;
-  deleteGalleryData(id: string, url: string): Promise<boolean>;
+  deleteGalleryFile(id: string, url: string): Promise<boolean>;
 }
 
 export const skillsModel: Attributes = {

@@ -14,12 +14,12 @@ export class MyProfileController {
     this.saveMyProfile = this.saveMyProfile.bind(this);
     this.saveMySettings = this.saveMySettings.bind(this);
     this.uploadCover = this.uploadCover.bind(this);
-    this.fetchUploadedCover = this.fetchUploadedCover.bind(this);
-    this.fetchUploadedGallery = this.fetchUploadedGallery.bind(this);
+    this.getCoverURL = this.getCoverURL.bind(this);
+    this.getGallery = this.getGallery.bind(this);
     this.updateGallery = this.updateGallery.bind(this);
     this.uploadGallery = this.uploadGallery.bind(this);
-    this.deleteGallery = this.deleteGallery.bind(this);
-    this.uploadAvatar = this.uploadAvatar.bind(this);
+    this.deleteGalleryFile = this.deleteGalleryFile.bind(this);
+    this.uploadImage = this.uploadImage.bind(this);
   }
   getMyProfile(req: Request, res: Response) {
     const id = buildAndCheckId<string>(req, res);
@@ -87,6 +87,24 @@ export class MyProfileController {
     }
   }
 
+  getCoverURL(req: Request, res: Response) {
+    const id = buildAndCheckId<string>(req, res);
+    if (id) {
+      this.service
+        .getMyProfile(id)
+        .then((user) => respondModel(user?.coverURL, res))
+        .catch((err) => handleError(err, res, this.log));
+    }
+  }
+  getGallery(req: Request, res: Response) {
+    const id = buildAndCheckId<string>(req, res);
+    if (id) {
+      this.service
+        .getMyProfile(id)
+        .then((user) => respondModel(minimize(user?.gallery ?? []), res))
+        .catch((err) => handleError(err, res, this.log));
+    }
+  }
   uploadCover(req: Request, res: Response) {
     if (!req || !req.file) {
       return;
@@ -94,50 +112,37 @@ export class MyProfileController {
     const fileName = req.file.originalname;
     const data = req.file.buffer;
     const { id } = req.body;
-    const uploadInfo: UploadData = {
-      id,
-      name: `${this.generateId()}_${id.toString()}_${fileName}`,
-      data,
-    };
-    this.generateId();
-    if (!uploadInfo) {
-      res.status(400).send('data cannot be empty');
+    const name = `${id.toString()}_${fileName}`;
+    if (!id) {
+      res.status(400).send('id cannot be empty');
     } else {
       this.service
-        .uploadCoverImage(uploadInfo)
+        .uploadCoverImage(id, name, data)
         .then((result) => res.status(200).json(result))
         .catch((e) => handleError(e, res, this.log));
     }
   }
-
-  uploadAvatar(req: Request, res: Response) {
+  uploadImage(req: Request, res: Response) {
     if (!req || !req.file) {
       return;
     }
     const fileName = req.file.originalname;
     const data = req.file.buffer;
     const { id } = req.body;
-    const uploadInfo: UploadData = {
-      id,
-      name: `${this.generateId()}_${id.toString()}_${fileName}`,
-      data,
-    };
-    this.generateId();
-    if (!uploadInfo) {
-      res.status(400).send('data cannot be empty');
+    const name = `${id.toString()}_${fileName}`;
+    if (!id) {
+      res.status(400).send('id cannot be empty');
     } else {
       this.service
-        .uploadImage(uploadInfo)
+        .uploadImage(id, name, data)
         .then((result) => res.status(200).json(result))
         .catch((e) => handleError(e, res, this.log));
     }
   }
-
   uploadGallery(req: Request, res: Response) {
     if (!req || !req.file) {
       return;
     }
-    const fileName = req.file.originalname;
     const data = req.file.buffer;
     const fileType = req.file.mimetype;
     const type = fileType.split('/')[0];
@@ -145,7 +150,7 @@ export class MyProfileController {
     const upload: UploadGallery = {
       id,
       source,
-      name: `${this.generateId()}_${id.toString()}_${fileName}`,
+      name: `${id.toString()}_${this.generateId()}`,
       data,
       type,
     };
@@ -158,24 +163,6 @@ export class MyProfileController {
         .catch((e) => handleError(e, res, this.log));
     }
   }
-  fetchUploadedCover(req: Request, res: Response) {
-    const id = buildAndCheckId<string>(req, res);
-    if (id) {
-      this.service
-        .getMyProfile(id)
-        .then((user) => respondModel(minimize(user?.coverURL), res))
-        .catch((err) => handleError(err, res, this.log));
-    }
-  }
-  fetchUploadedGallery(req: Request, res: Response) {
-    const id = buildAndCheckId<string>(req, res);
-    if (id) {
-      this.service
-        .getMyProfile(id)
-        .then((user) => respondModel(minimize(user?.gallery ?? []), res))
-        .catch((err) => handleError(err, res, this.log));
-    }
-  }
   updateGallery(req: Request, res: Response) {
     const { userId, data } = req.body;
     if (userId) {
@@ -185,12 +172,12 @@ export class MyProfileController {
         .catch((err) => handleError(err, res, this.log));
     }
   }
-  deleteGallery(req: Request, res: Response) {
+  deleteGalleryFile(req: Request, res: Response) {
     const id = req.query.userId?.toString();
     const url = req.query.url?.toString();
     if (id && url) {
       this.service
-        .deleteGalleryData(id, url)
+        .deleteGalleryFile(id, url)
         .then((result) => res.status(200).json(result))
         .catch((err) => handleError(err, res, this.log));
     }

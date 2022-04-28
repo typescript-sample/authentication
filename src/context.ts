@@ -5,7 +5,7 @@ import { Authenticator, AuthTemplateConfig, CodeMailSender, initializeStatus, Us
 import { compare } from 'bcrypt';
 import { Comparator } from 'bcrypt-plus';
 import { HealthController, LogController, Logger, Middleware, MiddlewareController, resources } from 'express-ext';
-import { deleteFile, GoogleStorageService, map, StorageConfig, useBuildUrl } from 'google-storage';
+import { deleteFile, GoogleStorageRepository, map, StorageConfig, useBuildUrl } from 'google-storage';
 import { generateToken } from 'jsonwebtoken-plus';
 import { MailConfig, MailService, Send } from 'mail-core';
 import { Db } from 'mongodb';
@@ -20,14 +20,15 @@ import shortid from 'shortid';
 import { SignupController } from 'signup-express';
 import { useRepository } from 'signup-mongo';
 import { initStatus, Signup, SignupSender, SignupService, SignupTemplateConfig, Validator } from 'signup-service';
+import { StorageConf } from 'storage-service';
 import { v4 as uuidv4 } from 'uuid';
 import { createValidator } from 'xvalidators';
-import { MyProfileController, StorageConf, useMyProfileController, UserSettings } from './my-profile';
+import { MyProfileController, useMyProfileController, UserSettings } from './my-profile';
 import { UserController, useUserController } from './user';
 
 resources.createValidator = createValidator;
 
-export interface Config { 
+export interface Config {
   cookie?: boolean;
   secret: string;
   auth: AuthTemplateConfig;
@@ -85,8 +86,8 @@ export function useContext(db: Db, logger: Logger, midLogger: Middleware, conf: 
   const storageConfig: StorageConfig = { bucket: conf.bucket, public: true };
   const storage = new Storage();
   const bucket = storage.bucket(conf.bucket);
-  const storageService = new GoogleStorageService(bucket, storageConfig, map);
-  const myprofile = useMyProfileController(logger.error, db, conf.settings, conf.storage, storageService, deleteFile, generateShortId, useBuildUrl(conf.bucket));
+  const storageRepository = new GoogleStorageRepository(bucket, storageConfig, map);
+  const myprofile = useMyProfileController(logger.error, db, conf.settings, storageRepository, deleteFile, generateShortId, useBuildUrl(conf.bucket));
   return { health, log, middleware, authentication, signup, password, myprofile, user };
 }
 const reg = /-/g;

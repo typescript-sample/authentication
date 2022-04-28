@@ -21,15 +21,15 @@ export function route(app: Application, ctx: ApplicationContext): void {
 
   app.get('/my-profile/:id', ctx.myprofile.getMyProfile);
   app.get('/my-profile/:id/settings', ctx.myprofile.getMySettings);
-  app.get('/my-profile/fetchImageUploaded/:id', ctx.myprofile.fetchUploadedCover);
-  app.get('/my-profile/fetchImageGalleryUploaded/:id', ctx.myprofile.fetchUploadedGallery);
+  app.get('/my-profile/fetchImageUploaded/:id', ctx.myprofile.getCoverURL);
+  app.get('/my-profile/fetchImageGalleryUploaded/:id', ctx.myprofile.getGallery);
   app.patch('/my-profile', ctx.myprofile.saveMyProfile);
   app.patch('/my-profile/:id/settings', ctx.myprofile.saveMySettings);
   app.post('/my-profile/upload', parser.single('file'), ctx.myprofile.uploadCover);
-  app.post('/my-profile/uploadAvatar', parser.single('file'), ctx.myprofile.uploadAvatar);
+  app.post('/my-profile/uploadAvatar', parser.single('file'), ctx.myprofile.uploadImage);
   app.post('/my-profile/uploadGallery', parser.single('file'), ctx.myprofile.uploadGallery);
   app.patch('/my-profile/uploadGallery', ctx.myprofile.updateGallery);
-  app.delete('/my-profile/uploadGallery', ctx.myprofile.deleteGallery);
+  app.delete('/my-profile/uploadGallery', ctx.myprofile.deleteGalleryFile);
 
   app.post('/users/search', ctx.user.search);
   app.get('/users/search', ctx.user.search);
