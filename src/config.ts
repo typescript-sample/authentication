@@ -145,7 +145,7 @@ Nếu đường link đó không hoạt động, hãy sao chép đường link �
   },
   bucket: 'go-firestore-rest-api.appspot.com',
   storage: {
-    avatar: 'avatar',
+    image: 'avatar',
     cover: 'cover',
     gallery: 'gallery'
   },

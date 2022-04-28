@@ -9,7 +9,7 @@ import { MyProfileController } from './user-controller';
 export * from './user';
 export { MyProfileController };
 
-export function useMyProfileController(log: Log, db: Db, settings: UserSettings, storage: StorageRepository, deleteFile: Delete, generateId: () => string, buildUrl: UrlBuild, model?: ModelConf, config?: StorageConf): MyProfileController {
+export function useMyProfileController(log: Log, db: Db, settings: UserSettings, storage: StorageRepository, deleteFile: Delete, generateId: () => string, buildUrl: UrlBuild, config?: StorageConf, model?: ModelConf): MyProfileController {
   const repository = new MongoUserRepository(db);
   const service = new MyProfileManager(repository, settings, storage, deleteFile, generateId, buildUrl, model, config);
   return new MyProfileController(log, service, generateId);
@@ -23,8 +23,8 @@ export class MyProfileManager extends StorageService<User, string> implements My
     deleteFile: Delete,
     generateId: () => string,
     buildUrl: UrlBuild,
-    model?: ModelConf,
     config?: StorageConf,
+    model?: ModelConf,
   ) {
     super(repository.load, repository.patch, storage, deleteFile, generateId, buildUrl, model, config);
     this.uploadCoverImage = this.uploadCoverImage.bind(this);

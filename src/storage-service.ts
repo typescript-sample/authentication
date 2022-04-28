@@ -78,7 +78,7 @@ export type Delete = (delFile: DeleteFile, url: string) => Promise<boolean>;
 export type UrlBuild = (name: string, directory?: string) => string;
 export class StorageService<T, ID> {
   constructor(
-    public loadData: (id: ID, ctx?: any) => Promise<T|null>,
+    public loadData: (id: ID, ctx?: any) => Promise<T | null>,
     public patchData: (obj: Partial<T>, ctx?: any) => Promise<number>,
     public storage: StorageRepository,
     public deleteFile: Delete,
@@ -137,7 +137,7 @@ export class StorageService<T, ID> {
     return res >= 1 ? true : false;
   }
 
-  async uploadGalleryFile({id, source, name, type, data}: UploadGallery<ID>): Promise<boolean> {
+  async uploadGalleryFile({ id, source, name, type, data }: UploadGallery<ID>): Promise<boolean> {
     const user: any = await this.loadData(id);
     if (!user) {
       return false;
@@ -191,8 +191,11 @@ export class StorageService<T, ID> {
 
 function removeFileExtension(name: string): string {
   const idx: number = name.lastIndexOf('.');
-  return name.substring(0, idx);
+  if (idx >= 0)
+    return name.substring(0, idx);
+  else return name
 }
+
 function appendFileExtension(s: string, ext: string): string {
   if (ext.length > 0) {
     return s + '.' + ext;
@@ -200,6 +203,7 @@ function appendFileExtension(s: string, ext: string): string {
     return s;
   }
 }
+
 function getFileExtension(name: string): string {
   const idx: number = name.lastIndexOf('.');
   if (idx >= 0) {
@@ -208,6 +212,7 @@ function getFileExtension(name: string): string {
     return '';
   }
 }
+
 function checkDuplicateFile(data: UploadInfo[], url: string): boolean {
   const rs = data.find((upload) => upload.url === url);
   return rs ? true : false;
