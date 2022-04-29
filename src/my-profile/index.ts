@@ -1,15 +1,15 @@
 import { StorageRepository } from 'google-storage';
 import { Db } from 'mongodb';
-import { Delete, Log, UrlBuild } from 'onecore';
+import { ModelConf, StorageConf, StorageService } from 'one-storage';
+import { BuildUrl, Delete, Generate, Log } from 'onecore';
 import { clone } from 'signup-mongo';
-import { ModelConf, StorageConf, StorageService } from '../storage-service';
 import { MongoUserRepository } from './mongo-user-repository';
 import { MyProfileService, User, UserRepository, UserSettings } from './user';
 import { MyProfileController } from './user-controller';
 export * from './user';
 export { MyProfileController };
 
-export function useMyProfileController(log: Log, db: Db, settings: UserSettings, storage: StorageRepository, deleteFile: Delete, generateId: () => string, buildUrl: UrlBuild, config?: StorageConf, model?: ModelConf): MyProfileController {
+export function useMyProfileController(log: Log, db: Db, settings: UserSettings, storage: StorageRepository, deleteFile: Delete, generateId: Generate, buildUrl: BuildUrl, config?: StorageConf, model?: ModelConf): MyProfileController {
   const repository = new MongoUserRepository(db);
   const service = new MyProfileManager(repository, settings, storage, deleteFile, generateId, buildUrl, model, config);
   return new MyProfileController(log, service, generateId);
@@ -21,12 +21,12 @@ export class MyProfileManager extends StorageService<User, string> implements My
     private settings: UserSettings,
     storage: StorageRepository,
     deleteFile: Delete,
-    generateId: () => string,
-    buildUrl: UrlBuild,
+    generateId: Generate,
+    buildUrl: BuildUrl,
     config?: StorageConf,
     model?: ModelConf,
   ) {
-    super(repository.load, repository.patch, storage, deleteFile, generateId, buildUrl, model, config);
+    super(repository.load, repository.patch, storage, deleteFile, generateId, buildUrl, config, model);
     this.uploadCoverImage = this.uploadCoverImage.bind(this);
     this.uploadGalleryFile = this.uploadGalleryFile.bind(this);
     this.updateGallery = this.updateGallery.bind(this);
@@ -42,8 +42,7 @@ export class MyProfileManager extends StorageService<User, string> implements My
     });
   }
   getMySettings(id: string): Promise<UserSettings | null> {
-    return this.repository
-      .load(id)
+    return this.repository.load(id)
       .then((user) =>
         user && user.settings ? user.settings : clone(this.settings)
       );

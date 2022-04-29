@@ -11,6 +11,7 @@ import { MailConfig, MailService, Send } from 'mail-core';
 import { Db } from 'mongodb';
 import { MongoChecker } from 'mongodb-extension';
 import nodemailer from 'nodemailer';
+import { StorageConf } from 'one-storage';
 import { PasscodeRepository } from 'passcode-mongo';
 import { PasswordController } from 'password-express';
 import { usePasswordRepository } from 'password-mongo';
@@ -20,8 +21,6 @@ import shortid from 'shortid';
 import { SignupController } from 'signup-express';
 import { useRepository } from 'signup-mongo';
 import { initStatus, Signup, SignupSender, SignupService, SignupTemplateConfig, Validator } from 'signup-service';
-import { StorageConf } from 'storage-service';
-import { v4 as uuidv4 } from 'uuid';
 import { createValidator } from 'xvalidators';
 import { MyProfileController, useMyProfileController, UserSettings } from './my-profile';
 import { UserController, useUserController } from './user';
@@ -72,7 +71,7 @@ export function useContext(db: Db, logger: Logger, midLogger: Middleware, conf: 
   const signupRepository = useRepository<string, Signup>(db, 'user', 'authentication', conf.signup.userStatus, conf.signup.fields, conf.signup.maxPasswordAge, conf.signup.track, conf.signup.map);
   const validator = new Validator();
   const signupStatus = initStatus(conf.signup.status);
-  const signupService = new SignupService<string, Signup>(signupStatus, signupRepository, generateId, comparator, comparator, passcodeRepository, signupMailSender.send, conf.signup.expires, validator.validate);
+  const signupService = new SignupService<string, Signup>(signupStatus, signupRepository, generate, comparator, comparator, passcodeRepository, signupMailSender.send, conf.signup.expires, validator.validate);
   const signup = new SignupController(logger.error, signupService);
 
   const passwordMailSender = new MailSender(sendMail, conf.mail.from, conf.password.templates.reset.body, conf.password.templates.reset.subject);
@@ -87,19 +86,12 @@ export function useContext(db: Db, logger: Logger, midLogger: Middleware, conf: 
   const storage = new Storage();
   const bucket = storage.bucket(conf.bucket);
   const storageRepository = new GoogleStorageRepository(bucket, storageConfig, map);
-  const myprofile = useMyProfileController(logger.error, db, conf.settings, storageRepository, deleteFile, generateShortId, useBuildUrl(conf.bucket));
+  const myprofile = useMyProfileController(logger.error, db, conf.settings, storageRepository, deleteFile, generate, useBuildUrl(conf.bucket));
   return { health, log, middleware, authentication, signup, password, myprofile, user };
 }
-const reg = /-/g;
-export function generateId(): string {
-  const s = uuidv4();
-  return s.replace(reg, '');
-}
-
-export function generateShortId(): string {
+export function generate(): string {
   return shortid.generate();
 }
-
 export function hasTwoFactors(userId: string): Promise<boolean> {
   return Promise.resolve(false);
 }
@@ -109,17 +101,5 @@ export function useSend(conf: MailConfig): Send {
   } else {
     const transporter = nodemailer.createTransport(conf.smtp);
     return new MailService(transporter).send;
-  }
-}
-export class UrlBuilder {
-  constructor(public bucket: string) {
-    this.build = this.build.bind(this);
-  }
-  build(name: string, directory?: string): string {
-    let key = name;
-    if (directory && directory.length > 0) {
-      key = directory + '/' + name;
-    }
-    return `https://storage.googleapis.com/${this.bucket}/${key}`;
   }
 }
