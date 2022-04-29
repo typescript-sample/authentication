@@ -1,6 +1,6 @@
 import { StorageRepository } from 'google-storage';
 import { Db } from 'mongodb';
-import { ModelConf, StorageConf, StorageService } from 'one-storage';
+import { ModelConf, StorageConf, StorageService, UploadInfo } from 'one-storage';
 import { BuildUrl, Delete, Generate, Log } from 'onecore';
 import { clone } from 'signup-mongo';
 import { MongoUserRepository } from './mongo-user-repository';
@@ -32,6 +32,9 @@ export class MyProfileManager extends StorageService<User, string> implements My
     this.updateGallery = this.updateGallery.bind(this);
     this.deleteGalleryFile = this.deleteGalleryFile.bind(this);
     this.uploadImage = this.uploadImage.bind(this);
+    this.getCoverURL = this.getCoverURL.bind(this);
+    this.getImageURL = this.getImageURL.bind(this);
+    this.getGalllery = this.getGalllery.bind(this);
   }
   getMyProfile(id: string): Promise<User | null> {
     return this.repository.load(id).then((user) => {
@@ -52,5 +55,32 @@ export class MyProfileManager extends StorageService<User, string> implements My
   }
   saveMySettings(id: string, settings: UserSettings): Promise<number> {
     return this.repository.patch({ id, settings });
+  }
+  getCoverURL(id: string): Promise<string> {
+    return this.repository.load(id).then((user) => {
+      if (user) {
+        delete (user as any)['settings'];
+        return (user as any)[this.model.cover]
+      }
+      return '';
+    });
+  }
+  getImageURL(id: string): Promise<string> {
+    return this.repository.load(id).then((user) => {
+      if (user) {
+        delete (user as any)['settings'];
+        return (user as any)[this.model.image]
+      }
+      return '';
+    });
+  }
+  getGalllery(id: string): Promise<UploadInfo[]> {
+    return this.repository.load(id).then((user) => {
+      if (user) {
+        delete (user as any)['settings'];
+        return (user as any)[this.model.gallery]
+      }
+      return [];
+    });
   }
 }

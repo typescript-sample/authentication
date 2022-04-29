@@ -91,6 +91,9 @@ export interface MyProfileService {
   uploadGalleryFile(uploadGallery: UploadGallery): Promise<boolean>;
   updateGallery(id: string, data: UploadInfo[]): Promise<boolean>;
   deleteGalleryFile(id: string, url: string): Promise<boolean>;
+  getCoverURL(id: string): Promise<string>;
+  getImageURL(id: string): Promise<string>;
+  getGalllery(id: string): Promise<UploadInfo[]>;
 }
 
 export const skillsModel: Attributes = {

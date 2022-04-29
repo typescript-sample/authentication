@@ -86,32 +86,49 @@ export class MyProfileController {
       }
     }
   }
-
+  getImageURL(req: Request, res: Response) {
+    const id = buildAndCheckId<string>(req, res);
+    if (id) {
+      this.service
+        .getImageURL(id)
+        .then((url) => respondModel(url, res))
+        .catch((err) => handleError(err, res, this.log));
+    } else {
+      res.status(400).send('data cannot be empty')
+    }
+  }
   getCoverURL(req: Request, res: Response) {
     const id = buildAndCheckId<string>(req, res);
     if (id) {
       this.service
-        .getMyProfile(id)
-        .then((user) => respondModel(user?.coverURL, res))
+        .getCoverURL(id)
+        .then((url) => respondModel(url, res))
         .catch((err) => handleError(err, res, this.log));
+    } else {
+      res.status(400).send('data cannot be empty')
     }
   }
   getGallery(req: Request, res: Response) {
     const id = buildAndCheckId<string>(req, res);
     if (id) {
       this.service
-        .getMyProfile(id)
-        .then((user) => respondModel(minimize(user?.gallery ?? []), res))
+        .getGalllery(id)
+        .then((gallery) => respondModel(minimize(gallery), res))
         .catch((err) => handleError(err, res, this.log));
+    } else {
+      res.status(400).send('data cannot be empty')
     }
   }
   uploadCover(req: Request, res: Response) {
     if (!req || !req.file) {
       return;
     }
+    const id = req.params.id
+    if (!id || id.length === 0) {
+      res.status(400).send('data cannot be empty')
+    };
     const fileName = req.file.originalname;
     const data = req.file.buffer;
-    const { id } = req.body;
     const name = `${id.toString()}_${fileName}`;
     if (!id) {
       res.status(400).send('id cannot be empty');
@@ -126,13 +143,13 @@ export class MyProfileController {
     if (!req || !req.file) {
       return;
     }
-    const fileName = req.file.originalname;
-    const data = req.file.buffer;
-    const { id } = req.body;
-    const name = `${id.toString()}_${fileName}`;
-    if (!id) {
-      res.status(400).send('id cannot be empty');
+    const id = req.params.id
+    if (!id || id.length === 0) {
+      res.status(400).send('data cannot be empty')
     } else {
+      const fileName = req.file.originalname;
+      const data = req.file.buffer;
+      const name = `${id.toString()}_${fileName}`;
       this.service
         .uploadImage(id, name, data)
         .then((result) => res.status(200).json(result))
@@ -143,43 +160,57 @@ export class MyProfileController {
     if (!req || !req.file) {
       return;
     }
-    const data = req.file.buffer;
-    const fileType = req.file.mimetype;
-    const type = fileType.split('/')[0];
-    const { id, source } = req.body;
-    const upload: UploadGallery = {
-      id,
-      source,
-      name: `${id.toString()}_${this.generateId()}`,
-      data,
-      type,
-    };
-    if (!upload) {
-      res.status(400).send('data cannot be empty');
+    const id = req.params.id
+    if (!id || id.length === 0) {
+      res.status(400).send('data cannot be empty')
     } else {
-      this.service
-        .uploadGalleryFile(upload)
-        .then((result) => res.status(200).json(result))
-        .catch((e) => handleError(e, res, this.log));
+      const data = req.file.buffer;
+      const fileType = req.file.mimetype;
+      const type = fileType.split('/')[0];
+      const { source } = req.body;
+      const upload: UploadGallery = {
+        id,
+        source,
+        name: `${id.toString()}_${this.generateId()}`,
+        data,
+        type,
+      };
+      if (!upload) {
+        res.status(400).send('data cannot be empty');
+      } else {
+        this.service
+          .uploadGalleryFile(upload)
+          .then((result) => res.status(200).json(result))
+          .catch((e) => handleError(e, res, this.log));
+      }
     }
   }
   updateGallery(req: Request, res: Response) {
-    const { userId, data } = req.body;
-    if (userId) {
-      this.service
-        .updateGallery(userId, data)
-        .then((result) => res.status(200).json(result))
-        .catch((err) => handleError(err, res, this.log));
+    const id = req.params.id.toString();
+    if (!id || id.length === 0) {
+      res.status(400).send('data cannot be empty')
+    } else {
+      const { data } = req.body;
+      if (id) {
+        this.service
+          .updateGallery(id, data)
+          .then((result) => res.status(200).json(result))
+          .catch((err) => handleError(err, res, this.log));
+      }
     }
   }
   deleteGalleryFile(req: Request, res: Response) {
-    const id = req.query.userId?.toString();
-    const url = req.query.url?.toString();
-    if (id && url) {
-      this.service
-        .deleteGalleryFile(id, url)
-        .then((result) => res.status(200).json(result))
-        .catch((err) => handleError(err, res, this.log));
+    const id = req.params.id.toString();
+    if (!id || id.length === 0) {
+      res.status(400).send('data cannot be empty')
+    } else {
+      const url = req.query.url?.toString();
+      if (id && url) {
+        this.service
+          .deleteGalleryFile(id, url)
+          .then((result) => res.status(200).json(result))
+          .catch((err) => handleError(err, res, this.log));
+      }
     }
   }
 }
