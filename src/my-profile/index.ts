@@ -1,8 +1,8 @@
 import { StorageRepository } from 'google-storage';
 import { Db } from 'mongodb';
-import { ModelConf, StorageConf, StorageService, UploadInfo } from '../storage-service';
 import { BuildUrl, Delete, Generate, Log } from 'onecore';
 import { clone } from 'signup-mongo';
+import { ModelConf, StorageConf, StorageService, UploadInfo } from 'one-storage';
 import { MongoUserRepository } from './mongo-user-repository';
 import { MyProfileService, User, UserRepository, UserSettings } from './user';
 import { MyProfileController } from './user-controller';
@@ -59,7 +59,7 @@ export class MyProfileManager extends StorageService<User, string> implements My
     return this.repository.load(id).then((user) => {
       if (user) {
         delete (user as any)['settings'];
-        return (user as any)[this.model.gallery]
+        return (user as any)[this.model.gallery];
       }
       return [];
     });
