@@ -75,7 +75,7 @@ export interface StorageRepository {
 }
 export type DeleteFile = (name: string, directory?: string) => Promise<boolean>;
 export type Delete = (delFile: DeleteFile, url: string) => Promise<boolean>;
-export type UrlBuild = (name: string, directory?: string) => string;
+export type BuildUrl = (name: string, directory?: string) => string;
 export class StorageService<T, ID> {
   constructor(
     public loadData: (id: ID, ctx?: any) => Promise<T | null>,
@@ -83,9 +83,9 @@ export class StorageService<T, ID> {
     public storage: StorageRepository,
     public deleteFile: Delete,
     public generateId: () => string,
-    public buildUrl: UrlBuild,
-    model?: ModelConf,
+    public buildUrl: BuildUrl,
     config?: StorageConf,
+    model?: ModelConf
   ) {
     this.model = buildConfig(model);
     this.config = buildStorageConfig(config);
@@ -97,10 +97,10 @@ export class StorageService<T, ID> {
   }
   model: ModelConfig;
   config: StorageConfig;
-  async uploadCoverImage(id: ID, name: string, data: string | Buffer): Promise<boolean> {
+  async uploadCoverImage(id: ID, name: string, data: string | Buffer): Promise<string> {
     const user: any = await this.loadData(id);
     if (!user) {
-      return false;
+      return '';
     }
     const oldUrl: string = user[this.model.cover];
     const galary: UploadInfo[] | undefined = user[this.model.gallery];
@@ -114,13 +114,13 @@ export class StorageService<T, ID> {
     obj[this.model.id] = id;
     obj[this.model.cover] = url;
     const res = await this.patchData(obj);
-    return res >= 1 ? true : false;
+    return res >= 1 ? url : '';
   }
 
-  async uploadImage(id: ID, name: string, data: string | Buffer): Promise<boolean> {
+  async uploadImage(id: ID, name: string, data: string | Buffer): Promise<string> {
     const user: any = await this.loadData(id);
     if (!user) {
-      return false;
+      return '';
     }
     const oldUrl: string = user[this.model.image];
     const galary: UploadInfo[] | undefined = user[this.model.gallery];
@@ -134,13 +134,13 @@ export class StorageService<T, ID> {
     obj[this.model.id] = id;
     obj[this.model.image] = url;
     const res = await this.patchData(obj);
-    return res >= 1 ? true : false;
+    return res >= 1 ? url : ''; 
   }
 
-  async uploadGalleryFile({ id, source, name, type, data }: UploadGallery<ID>): Promise<boolean> {
+  async uploadGalleryFile({ id, source, name, type, data }: UploadGallery<ID>): Promise<UploadInfo[]> {
     const user: any = await this.loadData(id);
     if (!user) {
-      return false;
+      return [];
     }
     let fileName: string = name;
     const newUrl = this.buildUrl(fileName, this.config.gallery);
@@ -155,7 +155,7 @@ export class StorageService<T, ID> {
     obj[this.model.id] = id;
     obj[this.model.gallery] = galary;
     const res = await this.patchData(obj);
-    return res >= 1 ? true : false;
+    return res >= 1 ? galary : [];
   }
 
   async updateGallery(id: ID, data: UploadInfo[]): Promise<boolean> {
@@ -189,30 +189,148 @@ export class StorageService<T, ID> {
   }
 }
 
-function removeFileExtension(name: string): string {
+export function removeFileExtension(name: string): string {
   const idx: number = name.lastIndexOf('.');
-  if (idx >= 0)
-    return name.substring(0, idx);
-  else return name
+  return (idx >= 0 ? name.substring(0, idx) : name);
 }
 
-function appendFileExtension(s: string, ext: string): string {
-  if (ext.length > 0) {
-    return s + '.' + ext;
-  } else {
-    return s;
+export function appendFileExtension(s: string, ext: string): string {
+  return (ext.length > 0 ? s + '.' + ext : s);
+}
+
+export function getFileExtension(name: string): string {
+  const idx: number = name.lastIndexOf('.');
+  return (idx >= 0 ? name.substring(idx + 1) : '');
+}
+export type DataType = 'ObjectId' | 'date' | 'datetime' | 'time'
+  | 'boolean' | 'number' | 'integer' | 'string' | 'text'
+  | 'object' | 'array' | 'binary'
+  | 'primitives' | 'booleans' | 'numbers' | 'integers' | 'strings' | 'dates' | 'datetimes' | 'times';
+export type FormatType = 'currency' | 'percentage' | 'email' | 'url' | 'phone' | 'fax' | 'ipv4' | 'ipv6';
+export type MatchType = 'equal' | 'prefix' | 'contain' | 'max' | 'min'; // contain: default for string, min: default for Date, number
+export interface Attribute {
+  name?: string;
+  field?: string;
+  column?: string;
+  type?: DataType;
+  format?: FormatType;
+  required?: boolean;
+  match?: MatchType;
+  default?: string | number | Date | boolean;
+  key?: boolean;
+  unique?: boolean;
+  enum?: string[] | number[];
+  q?: boolean;
+  noinsert?: boolean;
+  noupdate?: boolean;
+  nopatch?: boolean;
+  version?: boolean;
+  length?: number;
+  min?: number;
+  max?: number;
+  gt?: number;
+  lt?: number;
+  precision?: number;
+  scale?: number;
+  exp?: RegExp | string;
+  code?: string;
+  noformat?: boolean;
+  ignored?: boolean;
+  jsonField?: string;
+  link?: string;
+  typeof?: Attributes;
+  true?: string | number;
+  false?: string | number;
+}
+export interface Attributes {
+  [key: string]: Attribute;
+}
+export interface GenericRepository<T, ID> {
+  metadata?(): Attributes | undefined;
+  keys?(): string[];
+  load(id: ID, ctx?: any): Promise<T | null>;
+  insert(obj: T, ctx?: any): Promise<number>;
+  update(obj: T, ctx?: any): Promise<number>;
+  patch(obj: Partial<T>, ctx?: any): Promise<number>;
+  delete(id: ID, ctx?: any): Promise<number>;
+}
+// tslint:disable-next-line:max-classes-per-file
+export class GenericStorageService<T, ID> extends StorageService<T, ID> {
+  constructor(public repository: GenericRepository<T, ID>, storage: StorageRepository,
+    deleteFile: Delete,
+    generateId: () => string,
+    buildUrl: BuildUrl,
+    config?: StorageConf,
+    model?: ModelConf) {
+    super(repository.load, repository.patch, storage, deleteFile, generateId, buildUrl, config, model);
+    this.metadata = this.metadata.bind(this);
+    this.keys = this.keys.bind(this);
+    this.load = this.load.bind(this);
+    this.insert = this.insert.bind(this);
+    this.update = this.update.bind(this);
+    this.patch = this.patch.bind(this);
+    this.delete = this.delete.bind(this);
+  }
+  metadata(): Attributes | undefined {
+    return (this.repository.metadata ? this.repository.metadata() : undefined);
+  }
+  keys(): string[] {
+    return (this.repository.keys ? this.repository.keys() : []);
+  }
+  load(id: ID, ctx?: any): Promise<T | null> {
+    return this.repository.load(id, ctx);
+  }
+  insert(obj: T, ctx?: any): Promise<number> {
+    return this.repository.insert(obj, ctx);
+  }
+  update(obj: T, ctx?: any): Promise<number> {
+    return this.repository.update(obj, ctx);
+  }
+  patch(obj: Partial<T>, ctx?: any): Promise<number> {
+    return (this.repository.patch ? this.repository.patch(obj, ctx) : Promise.resolve(-1));
+  }
+  delete(id: ID, ctx?: any): Promise<number> {
+    return (this.repository.delete ? this.repository.delete(id, ctx) : Promise.resolve(-1));
   }
 }
+export interface Filter {
+  page?: number;
+  limit?: number;
+  firstLimit?: number;
+  fields?: string[];
+  sort?: string;
+  currentUserId?: string;
 
-function getFileExtension(name: string): string {
-  const idx: number = name.lastIndexOf('.');
-  if (idx >= 0) {
-    return name.substring(idx + 1);
-  } else {
-    return '';
+  q?: string;
+  keyword?: string;
+  excluding?: string[] | number[];
+  refId?: string | number;
+
+  pageIndex?: number;
+  pageSize?: number;
+}
+export interface SearchResult<T> {
+  list: T[];
+  total?: number;
+  last?: boolean;
+  nextPageToken?: string;
+}
+export type Search<T, F> = (s: F, limit?: number, offset?: number | string, fields?: string[]) => Promise<SearchResult<T>>;
+// tslint:disable-next-line:max-classes-per-file
+export class GenericSearchStorageService<T, ID, F extends Filter> extends GenericStorageService<T, ID> {
+  constructor(public find: Search<T, F>, repo: GenericRepository<T, ID>, storage: StorageRepository,
+    deleteFile: Delete,
+    generateId: () => string,
+    buildUrl: BuildUrl,
+    config?: StorageConf,
+    model?: ModelConf) {
+    super(repo, storage, deleteFile, generateId, buildUrl, config, model);
+    this.search = this.search.bind(this);
+  }
+  search(s: F, limit?: number, offset?: number | string, fields?: string[]): Promise<SearchResult<T>> {
+    return this.find(s, limit, offset, fields);
   }
 }
-
 function checkDuplicateFile(data: UploadInfo[], url: string): boolean {
   const rs = data.find((upload) => upload.url === url);
   return rs ? true : false;

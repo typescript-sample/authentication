@@ -21,7 +21,6 @@ export function route(app: Application, ctx: ApplicationContext): void {
 
   app.get('/my-profile/:id', ctx.myprofile.getMyProfile);
   app.get('/my-profile/:id/settings', ctx.myprofile.getMySettings);
-  app.get('/my-profile/:id/fetchImageUploaded', ctx.myprofile.getCoverURL);
   app.get('/my-profile/:id/fetchImageGalleryUploaded', ctx.myprofile.getGallery);
   app.patch('/my-profile', ctx.myprofile.saveMyProfile);
   app.patch('/my-profile/:id/settings', ctx.myprofile.saveMySettings);

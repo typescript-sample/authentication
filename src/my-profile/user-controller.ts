@@ -14,7 +14,6 @@ export class MyProfileController {
     this.saveMyProfile = this.saveMyProfile.bind(this);
     this.saveMySettings = this.saveMySettings.bind(this);
     this.uploadCover = this.uploadCover.bind(this);
-    this.getCoverURL = this.getCoverURL.bind(this);
     this.getGallery = this.getGallery.bind(this);
     this.updateGallery = this.updateGallery.bind(this);
     this.uploadGallery = this.uploadGallery.bind(this);
@@ -86,28 +85,7 @@ export class MyProfileController {
       }
     }
   }
-  getImageURL(req: Request, res: Response) {
-    const id = buildAndCheckId<string>(req, res);
-    if (id) {
-      this.service
-        .getImageURL(id)
-        .then((url) => respondModel(url, res))
-        .catch((err) => handleError(err, res, this.log));
-    } else {
-      res.status(400).send('data cannot be empty')
-    }
-  }
-  getCoverURL(req: Request, res: Response) {
-    const id = buildAndCheckId<string>(req, res);
-    if (id) {
-      this.service
-        .getCoverURL(id)
-        .then((url) => respondModel(url, res))
-        .catch((err) => handleError(err, res, this.log));
-    } else {
-      res.status(400).send('data cannot be empty')
-    }
-  }
+ 
   getGallery(req: Request, res: Response) {
     const id = buildAndCheckId<string>(req, res);
     if (id) {

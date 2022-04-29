@@ -86,13 +86,11 @@ export interface MyProfileService {
   getMySettings(id: string): Promise<UserSettings | null>;
   saveMyProfile(user: User): Promise<number>;
   saveMySettings(id: string, settings: UserSettings): Promise<number>;
-  uploadCoverImage(id: string, name: string, data: string | Buffer): Promise<boolean>;
-  uploadImage(id: string, name: string, data: string | Buffer): Promise<boolean>;
-  uploadGalleryFile(uploadGallery: UploadGallery): Promise<boolean>;
+  uploadCoverImage(id: string, name: string, data: string | Buffer): Promise<string>;
+  uploadImage(id: string, name: string, data: string | Buffer): Promise<string>;
+  uploadGalleryFile(uploadGallery: UploadGallery): Promise<UploadInfo[]>;
   updateGallery(id: string, data: UploadInfo[]): Promise<boolean>;
   deleteGalleryFile(id: string, url: string): Promise<boolean>;
-  getCoverURL(id: string): Promise<string>;
-  getImageURL(id: string): Promise<string>;
   getGalllery(id: string): Promise<UploadInfo[]>;
 }
 
