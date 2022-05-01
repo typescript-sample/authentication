@@ -25,6 +25,13 @@ export const config = {
     uri: 'mongodb+srv://dbUser:Demoaccount1@projectdemo.g0lah.mongodb.net',
     db: 'user'
   },
+  db: {
+    user: 'postgres',
+    host: 'localhost',
+    password: 'abcd1234',
+    database: 'masterdata',
+    port: 5432
+  },
   secret: 'secret',
   auth: {
     token: {

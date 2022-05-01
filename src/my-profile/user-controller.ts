@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 import { buildAndCheckId, handleError, minimize, respondModel } from 'express-ext';
 import { Log } from 'onecore';
-import { UserSettings } from '../my-profile';
 import { UploadController } from 'upload-express';
+import { UserSettings } from '../my-profile';
 import { MyProfileService } from './user';
 
 export class MyProfileController extends UploadController {
@@ -44,13 +44,7 @@ export class MyProfileController extends UploadController {
     } else {
       this.service
         .saveMyProfile(data)
-        .then((user) => {
-          if (user) {
-            res.status(200).json(user).end();
-          } else {
-            res.status(404).json(null).end();
-          }
-        })
+        .then((result) => res.status(200).json(result).end())
         .catch((err) => handleError(err, res, this.log));
     }
   }
@@ -65,13 +59,7 @@ export class MyProfileController extends UploadController {
       } else {
         this.service
           .saveMySettings(id, settings)
-          .then((user) => {
-            if (user) {
-              res.status(200).json(user);
-            } else {
-              res.status(404).json(null);
-            }
-          })
+          .then((result) => res.status(200).json(result).end())
           .catch((err) => handleError(err, res, this.log));
       }
     }

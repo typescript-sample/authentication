@@ -1,11 +1,12 @@
 import { StorageRepository } from 'google-storage';
 import { Db } from 'mongodb';
+import { ModelConf, StorageConf, StorageService, UploadInfo } from 'one-storage';
 import { BuildUrl, Delete, Generate, Log } from 'onecore';
 import { clone } from 'signup-mongo';
-import { ModelConf, StorageConf, StorageService, UploadInfo } from 'one-storage';
 import { MongoUserRepository } from './mongo-user-repository';
 import { MyProfileService, User, UserRepository, UserSettings } from './user';
 import { MyProfileController } from './user-controller';
+export * from './skill';
 export * from './user';
 export { MyProfileController };
 

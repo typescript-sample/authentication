@@ -16,12 +16,14 @@ import { PasscodeRepository } from 'passcode-mongo';
 import { PasswordController } from 'password-express';
 import { usePasswordRepository } from 'password-mongo';
 import { MailSender, PasswordService, PasswordTemplateConfig } from 'password-service';
+import { DB } from 'pg-extension';
 import { SendGridMailService } from 'sendgrid-plus';
 import shortid from 'shortid';
 import { SignupController } from 'signup-express';
 import { useRepository } from 'signup-mongo';
 import { initStatus, Signup, SignupSender, SignupService, SignupTemplateConfig, Validator } from 'signup-service';
 import { createValidator } from 'xvalidators';
+import { QueryController, SkillService } from './my-profile';
 import { MyProfileController, useMyProfileController, UserSettings } from './my-profile';
 import { UserController, useUserController } from './user';
 
@@ -47,9 +49,10 @@ export interface ApplicationContext {
   password: PasswordController;
   myprofile: MyProfileController;
   user: UserController;
+  skill: QueryController<string[]>;
 }
 
-export function useContext(db: Db, logger: Logger, midLogger: Middleware, conf: Config): ApplicationContext {
+export function useContext(db: Db, sqlDB: DB, logger: Logger, midLogger: Middleware, conf: Config): ApplicationContext {
   const log = new LogController(logger);
   const middleware = new MiddlewareController(midLogger);
   const mongoChecker = new MongoChecker(db);
@@ -87,7 +90,9 @@ export function useContext(db: Db, logger: Logger, midLogger: Middleware, conf: 
   const bucket = storage.bucket(conf.bucket);
   const storageRepository = new GoogleStorageRepository(bucket, storageConfig, map);
   const myprofile = useMyProfileController(logger.error, db, conf.settings, storageRepository, deleteFile, generate, useBuildUrl(conf.bucket));
-  return { health, log, middleware, authentication, signup, password, myprofile, user };
+  const skillService = new SkillService(sqlDB.query);
+  const skill = new QueryController<string[]>(logger.error, skillService.load, 'keyword');
+  return { health, log, middleware, authentication, signup, password, myprofile, user, skill };
 }
 export function generate(): string {
   return shortid.generate();
