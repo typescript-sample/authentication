@@ -4,7 +4,7 @@ import { MongoUserRepository } from 'authen-mongo';
 import { Authenticator, AuthTemplateConfig, CodeMailSender, initializeStatus, User } from 'authen-service';
 import { compare } from 'bcrypt';
 import { Comparator } from 'bcrypt-plus';
-import { HealthController, LogController, Logger, Middleware, MiddlewareController, resources } from 'express-ext';
+import { HealthController, LogController, Logger, Middleware, MiddlewareController, QueryController, resources } from 'express-ext';
 import { deleteFile, GoogleStorageRepository, map, StorageConfig, useBuildUrl } from 'google-storage';
 import { generateToken } from 'jsonwebtoken-plus';
 import { MailConfig, MailService, Send } from 'mail-core';
@@ -23,7 +23,7 @@ import { SignupController } from 'signup-express';
 import { useRepository } from 'signup-mongo';
 import { initStatus, Signup, SignupSender, SignupService, SignupTemplateConfig, Validator } from 'signup-service';
 import { createValidator } from 'xvalidators';
-import { QueryController, SkillService } from './my-profile';
+import { SkillService } from './my-profile';
 import { MyProfileController, useMyProfileController, UserSettings } from './my-profile';
 import { UserController, useUserController } from './user';
 
