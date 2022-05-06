@@ -32,6 +32,7 @@ export function route(app: Application, ctx: ApplicationContext): void {
   app.post('/my-profile/:id/youtube', ctx.myprofile.insertYoutube);
   app.delete('/my-profile/:id/youtube/:url', ctx.myprofile.deleteData);
   app.get('/skills', ctx.skill.query);
+  app.get('/interests', ctx.interest.query);
   app.post('/users/search', ctx.user.search);
   app.get('/users/search', ctx.user.search);
   app.get('/users/:id', ctx.user.load);
