@@ -53,7 +53,13 @@ export interface ApplicationContext {
   interest:QueryController<string[]>;
 }
 
-export function useContext(db: Db, sqlDB: DB, logger: Logger, midLogger: Middleware, conf: Config): ApplicationContext {
+export function useContext(
+  db: Db,
+  sqlDB: DB,
+  logger: Logger,
+  midLogger: Middleware,
+  conf: Config
+): ApplicationContext {
   const log = new LogController(logger);
   const middleware = new MiddlewareController(midLogger);
   const mongoChecker = new MongoChecker(db);
@@ -64,24 +70,103 @@ export function useContext(db: Db, sqlDB: DB, logger: Logger, midLogger: Middlew
   // const encrypter = new RC4Encrypter(conf.secret);
   const auth = conf.auth;
   const status = initializeStatus(conf.auth.status);
-  const codeMailSender = new CodeMailSender(sendMail, conf.mail.from, conf.auth.template.body, conf.auth.template.subject);
-  const verifiedCodeRepository = new PasscodeRepository<string>(db.collection('authenCode'));
-  const userRepository = new MongoUserRepository(db, conf.auth.db, auth.userStatus, auth.account);
-  const authenticator = new Authenticator(status, compare, generateToken, auth.token, auth.payload, auth.account, userRepository, undefined, auth.lockedMinutes, auth.maxPasswordFailed, codeMailSender.send, conf.auth.expires, verifiedCodeRepository, comparator.hash, hasTwoFactors);
-  const authentication = new AuthenticationController(logger.error, authenticator.authenticate, conf.cookie);
+  const codeMailSender = new CodeMailSender(
+    sendMail,
+    conf.mail.from,
+    conf.auth.template.body,
+    conf.auth.template.subject
+  );
+  const verifiedCodeRepository = new PasscodeRepository<string>(
+    db.collection("authenCode")
+  );
+  const userRepository = new MongoUserRepository(
+    db,
+    conf.auth.db,
+    auth.userStatus,
+    auth.account
+  );
+  const authenticator = new Authenticator(
+    status,
+    compare,
+    generateToken,
+    auth.token,
+    auth.payload,
+    auth.account,
+    userRepository,
+    undefined,
+    auth.lockedMinutes,
+    auth.maxPasswordFailed,
+    codeMailSender.send,
+    conf.auth.expires,
+    verifiedCodeRepository,
+    comparator.hash,
+    hasTwoFactors
+  );
+  const authentication = new AuthenticationController(
+    logger.error,
+    authenticator.authenticate,
+    conf.cookie
+  );
 
-  const signupMailSender = new SignupSender(conf.signup.url, sendMail, conf.mail.from, conf.signup.template.body, conf.signup.template.subject);
-  const passcodeRepository = new PasscodeRepository<string>(db.collection('signupCode'));
-  const signupRepository = useRepository<string, Signup>(db, 'user', 'authentication', conf.signup.userStatus, conf.signup.fields, conf.signup.maxPasswordAge, conf.signup.track, conf.signup.map);
+  const signupMailSender = new SignupSender(
+    conf.signup.url,
+    sendMail,
+    conf.mail.from,
+    conf.signup.template.body,
+    conf.signup.template.subject
+  );
+  const passcodeRepository = new PasscodeRepository<string>(
+    db.collection("signupCode")
+  );
+  const signupRepository = useRepository<string, Signup>(
+    db,
+    "user",
+    "authentication",
+    conf.signup.userStatus,
+    conf.signup.fields,
+    conf.signup.maxPasswordAge,
+    conf.signup.track,
+    conf.signup.map
+  );
   const validator = new Validator();
   const signupStatus = initStatus(conf.signup.status);
-  const signupService = new SignupService<string, Signup>(signupStatus, signupRepository, generate, comparator, comparator, passcodeRepository, signupMailSender.send, conf.signup.expires, validator.validate);
+  const signupService = new SignupService<string, Signup>(
+    signupStatus,
+    signupRepository,
+    generate,
+    comparator,
+    comparator,
+    passcodeRepository,
+    signupMailSender.send,
+    conf.signup.expires,
+    validator.validate
+  );
   const signup = new SignupController(logger.error, signupService);
 
-  const passwordMailSender = new MailSender(sendMail, conf.mail.from, conf.password.templates.reset.body, conf.password.templates.reset.subject);
-  const codeRepository = new PasscodeRepository<string>(db.collection('passwordCode'));
-  const passwordRepository = usePasswordRepository<string>(db, conf.password.db, conf.password.max, conf.password.fields);
-  const passwordService = new PasswordService<string>(comparator, passwordRepository, passwordMailSender.send, conf.password.expires, codeRepository, conf.password.max, undefined);
+  const passwordMailSender = new MailSender(
+    sendMail,
+    conf.mail.from,
+    conf.password.templates.reset.body,
+    conf.password.templates.reset.subject
+  );
+  const codeRepository = new PasscodeRepository<string>(
+    db.collection("passwordCode")
+  );
+  const passwordRepository = usePasswordRepository<string>(
+    db,
+    conf.password.db,
+    conf.password.max,
+    conf.password.fields
+  );
+  const passwordService = new PasswordService<string>(
+    comparator,
+    passwordRepository,
+    passwordMailSender.send,
+    conf.password.expires,
+    codeRepository,
+    conf.password.max,
+    undefined
+  );
   const password = new PasswordController(logger.error, passwordService);
 
   const user = useUserController(logger.error, db);
@@ -104,7 +189,7 @@ export function hasTwoFactors(userId: string): Promise<boolean> {
   return Promise.resolve(false);
 }
 export function useSend(conf: MailConfig): Send {
-  if (conf.provider === 'sendgrid') {
+  if (conf.provider === "sendgrid") {
     return new SendGridMailService(conf.key).send;
   } else {
     const transporter = nodemailer.createTransport(conf.smtp);
