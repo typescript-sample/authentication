@@ -25,10 +25,12 @@ export function route(app: Application, ctx: ApplicationContext): void {
   app.patch('/my-profile', ctx.myprofile.saveMyProfile);
   app.patch('/my-profile/:id/settings', ctx.myprofile.saveMySettings);
   app.post('/my-profile/:id/cover', parser.single('file'), ctx.myprofile.uploadCover);
-  app.post('/my-profile/:id/upload', parser.single('file'), ctx.myprofile.uploadImage);
+  app.post('/my-profile/:id/upload', parser.array('files'), ctx.myprofile.uploadImage);
   app.post('/my-profile/:id/gallery', parser.single('file'), ctx.myprofile.uploadGallery);
   app.patch('/my-profile/:id/gallery', ctx.myprofile.updateGallery);
   app.delete('/my-profile/:id/gallery', ctx.myprofile.deleteGalleryFile);
+  app.post('/my-profile/:id/youtube', ctx.myprofile.insertYoutube);
+  app.delete('/my-profile/:id/youtube/:url', ctx.myprofile.deleteData);
   app.get('/skills', ctx.skill.query);
 
   app.post('/users/search', ctx.user.search);

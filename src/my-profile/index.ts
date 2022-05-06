@@ -1,6 +1,6 @@
 import { StorageRepository } from 'google-storage';
 import { Db } from 'mongodb';
-import { ModelConf, StorageConf, StorageService, UploadInfo } from 'one-storage';
+import { ModelConf, StorageConf, StorageService, UploadInfo } from '../storage';
 import { BuildUrl, Delete, Generate, Log } from 'onecore';
 import { clone } from 'signup-mongo';
 import { MongoUserRepository } from './mongo-user-repository';
@@ -65,4 +65,6 @@ export class MyProfileManager extends StorageService<User, string> implements My
       return [];
     });
   }
+
+  
 }

@@ -44,6 +44,7 @@
     "pg-extension": "^0.1.1",
     "reflectx": "^0.0.10",
     "sendgrid-plus": "^0.0.2",
+    "sharp": "^0.30.4",
     "shortid": "^2.2.16",
     "signup-express": "^0.0.1",
     "signup-mongo": "^0.0.1",
