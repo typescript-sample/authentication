@@ -16,14 +16,14 @@ import { PasscodeRepository } from 'passcode-mongo';
 import { PasswordController } from 'password-express';
 import { usePasswordRepository } from 'password-mongo';
 import { MailSender, PasswordService, PasswordTemplateConfig } from 'password-service';
-import { DB } from 'pg-extension';
+import { DB, StringService } from 'pg-extension';
 import { SendGridMailService } from 'sendgrid-plus';
 import shortid from 'shortid';
 import { SignupController } from 'signup-express';
 import { useRepository } from 'signup-mongo';
 import { initStatus, Signup, SignupSender, SignupService, SignupTemplateConfig, Validator } from 'signup-service';
 import { createValidator } from 'xvalidators';
-import { SkillService } from './my-profile';
+
 import { MyProfileController, useMyProfileController, UserSettings } from './my-profile';
 import { UserController, useUserController } from './user';
 
@@ -50,6 +50,7 @@ export interface ApplicationContext {
   myprofile: MyProfileController;
   user: UserController;
   skill: QueryController<string[]>;
+  interest:QueryController<string[]>;
 }
 
 export function useContext(db: Db, sqlDB: DB, logger: Logger, midLogger: Middleware, conf: Config): ApplicationContext {
@@ -90,9 +91,11 @@ export function useContext(db: Db, sqlDB: DB, logger: Logger, midLogger: Middlew
   const bucket = storage.bucket(conf.bucket);
   const storageRepository = new GoogleStorageRepository(bucket, storageConfig, map);
   const myprofile = useMyProfileController(logger.error, db, conf.settings, storageRepository, deleteFile, generate, useBuildUrl(conf.bucket));
-  const skillService = new SkillService('skills','skill',sqlDB.query, sqlDB.execBatch);
+  const skillService = new StringService('skills', 'skill', sqlDB.query, sqlDB.execBatch);
   const skill = new QueryController<string[]>(logger.error, skillService.load, 'keyword');
-  return { health, log, middleware, authentication, signup, password, myprofile, user, skill };
+  const interestService = new StringService('interests', 'interest', sqlDB.query, sqlDB.execBatch);
+  const interest = new QueryController<string[]>(logger.error, interestService.load, 'keyword');
+  return { health, log, middleware, authentication, signup, password, myprofile, user, skill, interest };
 }
 export function generate(): string {
   return shortid.generate();

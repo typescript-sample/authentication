@@ -6,7 +6,6 @@ import { clone } from 'signup-mongo';
 import { MongoUserRepository } from './mongo-user-repository';
 import { MyProfileService, User, UserRepository, UserSettings } from './user';
 import { MyProfileController } from './user-controller';
-export * from './skill';
 export * from './user';
 export { MyProfileController };
 
