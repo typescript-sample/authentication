@@ -30,7 +30,6 @@ export function route(app: Application, ctx: ApplicationContext): void {
   app.patch('/my-profile/:id/gallery', ctx.myprofile.updateGallery);
   app.delete('/my-profile/:id/gallery', ctx.myprofile.deleteGalleryFile);
   app.get('/skills', ctx.skill.query);
-
   app.post('/users/search', ctx.user.search);
   app.get('/users/search', ctx.user.search);
   app.get('/users/:id', ctx.user.load);

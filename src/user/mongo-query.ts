@@ -22,7 +22,6 @@ export function query(filter: UserFilter): FilterQuery<User> {
     const or = [o1, o2, o3, o4];
     q.$or = or;
   }
-  console.log(JSON.stringify(q));
   return q;
 }
 export function isEmpty(s?: string): boolean {
