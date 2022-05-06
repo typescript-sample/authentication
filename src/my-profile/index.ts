@@ -9,10 +9,11 @@ import { MyProfileController } from './user-controller';
 export * from './user';
 export { MyProfileController };
 
-export function useMyProfileController(log: Log, db: Db, settings: UserSettings, storage: StorageRepository, deleteFile: Delete, generateId: Generate, buildUrl: BuildUrl, config?: StorageConf, model?: ModelConf): MyProfileController {
+export function useMyProfileController(log: Log, db: Db, settings: UserSettings, storage: StorageRepository, deleteFile: Delete, generateId: Generate, buildUrl: BuildUrl, sizesCover: number[],
+  sizesImage: number[], config?: StorageConf, model?: ModelConf): MyProfileController {
   const repository = new MongoUserRepository(db);
-  const service = new MyProfileManager(repository, settings, storage, deleteFile, generateId, buildUrl, model, config);
-  return new MyProfileController(log, service, generateId);
+  const service = new MyProfileManager(repository, settings, storage, deleteFile, generateId, buildUrl, sizesCover, sizesImage, model, config);
+  return new MyProfileController(log, service, generateId, sizesCover, sizesImage);
 }
 
 export class MyProfileManager extends StorageService<User, string> implements MyProfileService {
@@ -23,10 +24,12 @@ export class MyProfileManager extends StorageService<User, string> implements My
     deleteFile: Delete,
     generateId: Generate,
     buildUrl: BuildUrl,
+    sizesCover: number[],
+    sizesImage: number[],
     config?: StorageConf,
     model?: ModelConf,
   ) {
-    super(repository.load, repository.patch, storage, deleteFile, generateId, buildUrl, config, model);
+    super(repository.load, repository.patch, storage, deleteFile, generateId, buildUrl, sizesCover, sizesImage, config, model);
     this.uploadCoverImage = this.uploadCoverImage.bind(this);
     this.uploadGalleryFile = this.uploadGalleryFile.bind(this);
     this.updateGallery = this.updateGallery.bind(this);
@@ -42,7 +45,7 @@ export class MyProfileManager extends StorageService<User, string> implements My
       return user;
     });
   }
-  getMySettings(id: string): Promise<UserSettings | null> {
+  getMySettings(id: string): Promise<UserSettings | null> { 
     return this.repository.load(id)
       .then((user) =>
         user && user.settings ? user.settings : clone(this.settings)
@@ -65,5 +68,5 @@ export class MyProfileManager extends StorageService<User, string> implements My
     });
   }
 
-  
+
 }

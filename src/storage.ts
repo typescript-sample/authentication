@@ -87,6 +87,8 @@ export class StorageService<T, ID> {
     public deleteFile: Delete,
     public generateId: () => string,
     public buildUrl: BuildUrl,
+    public sizesCover: number[],
+    public sizesImage: number[],
     config?: StorageConf,
     model?: ModelConf
   ) {
@@ -129,7 +131,7 @@ export class StorageService<T, ID> {
   async uploadImage(
     id: ID,
 
-    data: UploadData[]
+    data: UploadData[], sizes?: number[]
   ): Promise<string> {
     const user: any = await this.loadData(id);
     if (!user) {
@@ -138,22 +140,22 @@ export class StorageService<T, ID> {
     let urlUploaded: string = "";
     const oldUrl: string = user[this.model.image];
     const galary: UploadInfo[] | undefined = user[this.model.gallery];
-    await this.deleteFileUpload(oldUrl, galary);
-    for (let i = 0; i < data.length; i++) {
+    await this.deleteFileUpload(oldUrl, galary, sizes??this.sizesImage);
+    for (const [index, file] of data.entries()) {
       //size
       //
       const urlOrigin = await this.storage.upload(
-        data[i].data,
-        data[i].name,
+        file.data,
+        file.name,
         this.config.image
       );
       const obj: any = {};
-      
-    
-      if (i === 0) {
+
+
+      if (index === 0) {
         obj[this.model.id] = id;
         obj[this.model.image] = urlOrigin;
-        urlUploaded=urlOrigin
+        urlUploaded = urlOrigin
         const res = await this.patchData(obj);
         if (res < 1) return "";
       }
@@ -162,22 +164,20 @@ export class StorageService<T, ID> {
     return urlUploaded;
   }
 
-  async deleteFileUpload(oldUrl: string, galary: UploadInfo[] | undefined) {
-    let size: string = "";
-    for (let i = 0; i < 2; i++) {
-      if (i === 1) {
-        size = "_xs";
+  async deleteFileUpload(oldUrl: string, galary: UploadInfo[] | undefined, sizes?: number[]) {
+    //delete original file
+    if (oldUrl && oldUrl.length > 0) {
+      if (shouldDelete(oldUrl, galary)) {
+        await this.deleteFile(this.storage.delete, oldUrl).catch(err=>{})
       }
-      if (i === 2) {
-        size = "_md";
-      }
+    }
+    if (!sizes) return
+    for (const size of sizes) {
       const oldSizeURL =
-        removeFileExtension(oldUrl) + size +"."+ getFileExtension(oldUrl);
+        removeFileExtension(oldUrl) + "_" + size + "." + getFileExtension(oldUrl);
       if (oldSizeURL && oldSizeURL.length > 0) {
         if (shouldDelete(oldSizeURL, galary)) {
-          await this.deleteFile(this.storage.delete, oldSizeURL).catch(
-            (err) => {}
-          );
+          await this.deleteFile(this.storage.delete, oldSizeURL).catch(err=>{})
         }
       }
     }
@@ -363,6 +363,8 @@ export class GenericStorageService<T, ID> extends StorageService<T, ID> {
     deleteFile: Delete,
     generateId: () => string,
     buildUrl: BuildUrl,
+    sizesCover: number[],
+    sizesImage: number[],
     config?: StorageConf,
     model?: ModelConf
   ) {
@@ -373,6 +375,8 @@ export class GenericStorageService<T, ID> extends StorageService<T, ID> {
       deleteFile,
       generateId,
       buildUrl,
+      sizesCover,
+      sizesImage,
       config,
       model
     );
@@ -443,7 +447,7 @@ export class GenericSearchStorageService<
   T,
   ID,
   F extends Filter
-> extends GenericStorageService<T, ID> {
+  > extends GenericStorageService<T, ID> {
   constructor(
     public find: Search<T, F>,
     repo: GenericRepository<T, ID>,
@@ -451,10 +455,13 @@ export class GenericSearchStorageService<
     deleteFile: Delete,
     generateId: () => string,
     buildUrl: BuildUrl,
+    sizesCover: number[],
+    sizesImage: number[],
     config?: StorageConf,
     model?: ModelConf
   ) {
-    super(repo, storage, deleteFile, generateId, buildUrl, config, model);
+    super(repo, storage, deleteFile, generateId, buildUrl, sizesCover,
+      sizesImage, config, model);
     this.search = this.search.bind(this);
   }
   search(

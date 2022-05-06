@@ -45,7 +45,7 @@ export interface UploadService {
     name: string,
     data: string | Buffer
   ): Promise<string>;
-  uploadImage(id: string, data: UploadData[]): Promise<string>;
+  uploadImage(id: string, data: UploadData[],sizes?:number[]): Promise<string>;
   uploadGalleryFile(upload: Upload): Promise<UploadInfo[]>;
   updateGallery(id: string, data: UploadInfo[]): Promise<boolean>;
   deleteGalleryFile(id: string, url: string): Promise<boolean>;
@@ -58,7 +58,9 @@ export class UploadController {
     public uploadService: UploadService,
     public getUploads: (id: string) => Promise<UploadInfo[]>,
     public generateId: () => string,
-    id?: string
+    public sizesCover:number[],
+    public sizesImage:number[],
+    id?: string,
   ) {
     this.id = id && id.length > 0 ? id : "id";
     this.uploadCover = this.uploadCover.bind(this);
@@ -120,7 +122,7 @@ export class UploadController {
           const name = `${id.toString()}_${generateStr}_${fileName}`;
           listFile.push({ name, data });
         });
-
+       
         this.uploadService
           .uploadImage(id, listFile)
           .then((result) => res.status(200).json(result).end())

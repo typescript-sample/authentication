@@ -14,9 +14,11 @@ export class MyProfileController extends UploadController {
   constructor(
     log: Log,
     private service: MyProfileService,
-    generateId: () => string
+    generateId: () => string,
+    sizesCover:number[],
+    sizesImage:number[]
   ) {
-    super(log, service, service.getGalllery, generateId, "id");
+    super(log, service, service.getGalllery, generateId,sizesCover,sizesImage, "id");
     this.getMyProfile = this.getMyProfile.bind(this);
     this.getMySettings = this.getMySettings.bind(this);
     this.saveMyProfile = this.saveMyProfile.bind(this);

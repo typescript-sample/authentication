@@ -92,7 +92,7 @@ export interface MyProfileService {
     name: string,
     data: string | Buffer
   ): Promise<string>;
-  uploadImage(id: string, data: UploadData[]): Promise<string>;
+  uploadImage(id: string, data: UploadData[],sizes?:number[]): Promise<string>;
   uploadGalleryFile(uploadGallery: UploadGallery): Promise<UploadInfo[]>;
   updateGallery(id: string, data: UploadInfo[]): Promise<boolean>;
   deleteGalleryFile(id: string, url: string): Promise<boolean>;
