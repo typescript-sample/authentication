@@ -208,37 +208,11 @@ export function useContext(
   const storageConfig: StorageConfig = { bucket: conf.bucket, public: true };
   const storage = new Storage();
   const bucket = storage.bucket(conf.bucket);
-  const storageRepository = new GoogleStorageRepository(
-    bucket,
-    storageConfig,
-    map
-  );
-  const myprofile = useMyProfileController(
-    logger.error,
-    db,
-    conf.settings,
-    storageRepository,
-    deleteFile,
-    generate,
-    useBuildUrl(conf.bucket)
-  );
-  const skillService = new SkillService(sqlDB.query);
-  const skill = new QueryController<string[]>(
-    logger.error,
-    skillService.load,
-    "keyword"
-  );
-  return {
-    health,
-    log,
-    middleware,
-    authentication,
-    signup,
-    password,
-    myprofile,
-    user,
-    skill,
-  };
+  const storageRepository = new GoogleStorageRepository(bucket, storageConfig, map);
+  const myprofile = useMyProfileController(logger.error, db, conf.settings, storageRepository, deleteFile, generate, useBuildUrl(conf.bucket));
+  const skillService = new SkillService('skills','skill',sqlDB.query, sqlDB.execBatch);
+  const skill = new QueryController<string[]>(logger.error, skillService.load, 'keyword');
+  return { health, log, middleware, authentication, signup, password, myprofile, user, skill };
 }
 export function generate(): string {
   return shortid.generate();
