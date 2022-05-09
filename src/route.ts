@@ -24,7 +24,7 @@ export function route(app: Application, ctx: ApplicationContext): void {
   app.get('/my-profile/:id/fetchImageGalleryUploaded', ctx.myprofile.getGallery);
   app.patch('/my-profile', ctx.myprofile.saveMyProfile);
   app.patch('/my-profile/:id/settings', ctx.myprofile.saveMySettings);
-  app.post('/my-profile/:id/cover', parser.single('file'), ctx.myprofile.uploadCover);
+  app.post('/my-profile/:id/cover', parser.array('files'), ctx.myprofile.uploadCover);
   app.post('/my-profile/:id/upload', parser.array('files'), ctx.myprofile.uploadImage);
   app.post('/my-profile/:id/gallery', parser.single('file'), ctx.myprofile.uploadGallery);
   app.patch('/my-profile/:id/gallery', ctx.myprofile.updateGallery);
