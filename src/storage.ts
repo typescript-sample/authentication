@@ -115,7 +115,7 @@ export class StorageService<T, ID> {
     let urlUploaded: string = "";
     const oldUrl: string = user[this.model.cover];
     const galary: UploadInfo[] | undefined = user[this.model.gallery];
-    await this.deleteFileUpload(oldUrl, galary, sizes??this.sizesImage);
+    await this.deleteFileUpload(oldUrl, galary, sizes??this.sizesCover);
     for (const [index, file] of data.entries()) {
       //size
       //
