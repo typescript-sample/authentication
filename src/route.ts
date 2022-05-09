@@ -29,8 +29,8 @@ export function route(app: Application, ctx: ApplicationContext): void {
   app.post('/my-profile/:id/gallery', parser.single('file'), ctx.myprofile.uploadGallery);
   app.patch('/my-profile/:id/gallery', ctx.myprofile.updateGallery);
   app.delete('/my-profile/:id/gallery', ctx.myprofile.deleteGalleryFile);
-  app.post('/my-profile/:id/youtube', ctx.myprofile.insertYoutube);
-  app.delete('/my-profile/:id/youtube/:url', ctx.myprofile.deleteData);
+  app.post('/my-profile/:id/youtube', ctx.myprofile.addExternalResource);
+  app.delete('/my-profile/:id/youtube', ctx.myprofile.deleteExternalResource);
   app.get('/skills', ctx.skill.query);
   app.get('/interests', ctx.interest.query);
   app.post('/users/search', ctx.user.search);

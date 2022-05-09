@@ -40,12 +40,14 @@ export interface UploadData {
 }
 
 export interface UploadService {
-  uploadCoverImage(id: string, data: UploadData[],sizes?:number[]): Promise<string>;
-  uploadImage(id: string, data: UploadData[],sizes?:number[]): Promise<string>;
+  uploadCoverImage(id: string, data: UploadData[], sizes?: number[]): Promise<string>;
+  uploadImage(id: string, data: UploadData[], sizes?: number[]): Promise<string>;
   uploadGalleryFile(upload: Upload): Promise<UploadInfo[]>;
   updateGallery(id: string, data: UploadInfo[]): Promise<boolean>;
   deleteGalleryFile(id: string, url: string): Promise<boolean>;
   getGalllery(id: string): Promise<UploadInfo[]>;
+  addExternalResource(id: string, data: UploadInfo): Promise<boolean>;
+  deleteExternalResource(id: string, url: string): Promise<boolean>; 
 }
 
 export class UploadController {
@@ -54,8 +56,8 @@ export class UploadController {
     public uploadService: UploadService,
     public getUploads: (id: string) => Promise<UploadInfo[]>,
     public generateId: () => string,
-    public sizesCover:number[],
-    public sizesImage:number[],
+    public sizesCover: number[],
+    public sizesImage: number[], 
     id?: string,
   ) {
     this.id = id && id.length > 0 ? id : "id";
@@ -100,7 +102,7 @@ export class UploadController {
           const name = `${id.toString()}_${generateStr}_${fileName}`;
           listFile.push({ name, data });
         });
-       
+
         this.uploadService
           .uploadCoverImage(id, listFile)
           .then((result) => res.status(200).json(result).end())
@@ -124,7 +126,7 @@ export class UploadController {
           const name = `${id.toString()}_${generateStr}_${fileName}`;
           listFile.push({ name, data });
         });
-       
+
         this.uploadService
           .uploadImage(id, listFile)
           .then((result) => res.status(200).json(result).end())
@@ -188,6 +190,32 @@ export class UploadController {
           .then((result) => res.status(200).json(result))
           .catch((err) => handleError(err, res, this.log));
       }
+    }
+  }
+  addExternalResource(req: Request, res: Response) {
+    const type = req.query.type;
+    const url = req.query.url
+    const id = req.params["id"];
+    if (!id || id.length === 0 || !type || !url) {
+      res.status(400).end("id cannot be empty");
+    } else {
+      this.uploadService
+        .addExternalResource(id, { type: type.toString(), url: url.toString() })
+        .then((result) => res.status(200).json(result))
+        .catch((e) => handleError(e, res, this.log));
+    }
+  }
+
+  deleteExternalResource(req: Request, res: Response) {
+    const { id } = req.params;
+    const url = req.query.url
+    if (url && id) {
+      this.uploadService
+        .deleteExternalResource(id.toString(), url.toString())
+        .then((result) => res.status(200).json(result))
+        .catch((e) => handleError(e, res, this.log));
+    } else {
+      return res.status(400).end("data cannot be empty");
     }
   }
 }

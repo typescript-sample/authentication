@@ -99,8 +99,8 @@ export class StorageService<T, ID> {
     this.updateGallery = this.updateGallery.bind(this);
     this.deleteGalleryFile = this.deleteGalleryFile.bind(this);
     this.uploadImage = this.uploadImage.bind(this);
-    this.insertYoutube = this.insertYoutube.bind(this);
-    this.deleteYoutube = this.deleteYoutube.bind(this);
+    this.addExternalResource = this.addExternalResource.bind(this);
+    this.deleteExternalResource = this.deleteExternalResource.bind(this);
   }
   model: ModelConfig;
   config: StorageConfig;
@@ -252,7 +252,7 @@ export class StorageService<T, ID> {
     const res = await this.patchData(obj);
     return res >= 1 ? true : false;
   }
-  async insertYoutube(id: ID, data: UploadInfo): Promise<boolean> {
+  async addExternalResource(id: ID, data: UploadInfo): Promise<boolean> {
     const user: any = await this.loadData(id);
     if (!user) {
       return false;
@@ -265,7 +265,7 @@ export class StorageService<T, ID> {
     return rs >= 1 ? true : false;
   }
 
-  async deleteYoutube(id: ID, url: string): Promise<boolean> {
+  async deleteExternalResource(id: ID, url: string): Promise<boolean> {
     const user: any = await this.loadData(id);
     user[this.model.gallery] = user[this.model.gallery].filter(
       (file: UploadInfo) => file.url !== url

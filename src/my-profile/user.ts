@@ -93,8 +93,8 @@ export interface MyProfileService {
   updateGallery(id: string, data: UploadInfo[]): Promise<boolean>;
   deleteGalleryFile(id: string, url: string): Promise<boolean>;
   getGalllery(id: string): Promise<UploadInfo[]>;
-  insertYoutube(id: string, data: UploadInfo): Promise<boolean>;
-  deleteYoutube(id: string, url: string): Promise<boolean>;
+  addExternalResource(id: string, data: UploadInfo): Promise<boolean>;
+  deleteExternalResource(id: string, url: string): Promise<boolean>;
 }
 
 export const skillsModel: Attributes = {

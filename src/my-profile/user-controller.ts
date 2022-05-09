@@ -15,16 +15,16 @@ export class MyProfileController extends UploadController {
     log: Log,
     private service: MyProfileService,
     generateId: () => string,
-    sizesCover:number[],
-    sizesImage:number[]
+    sizesCover: number[],
+    sizesImage: number[]
   ) {
-    super(log, service, service.getGalllery, generateId,sizesCover,sizesImage, "id");
+    super(log, service, service.getGalllery, generateId, sizesCover, sizesImage, "id");
     this.getMyProfile = this.getMyProfile.bind(this);
     this.getMySettings = this.getMySettings.bind(this);
     this.saveMyProfile = this.saveMyProfile.bind(this);
     this.saveMySettings = this.saveMySettings.bind(this);
-    this.insertYoutube = this.insertYoutube.bind(this);
-    this.deleteData = this.deleteData.bind(this);
+    this.addExternalResource = this.addExternalResource.bind(this);
+    this.deleteExternalResource = this.deleteExternalResource.bind(this);
   }
   getMyProfile(req: Request, res: Response) {
     const id = buildAndCheckId<string>(req, res);
@@ -74,28 +74,5 @@ export class MyProfileController extends UploadController {
     }
   }
 
-  insertYoutube(req: Request, res: Response) {
-    const { type, url } = req.body;
-    const id = req.params["id"];
-    if (!id || id.length === 0 || !type || !url) {
-      res.status(400).end("id cannot be empty");
-    } else {
-      this.service
-        .insertYoutube(id, { type, url })
-        .then((result) => res.status(200).json(result))
-        .catch((e) => handleError(e, res, this.log));
-    }
-  }
-
-  deleteData(req: Request, res: Response) {
-    const { url, id } = req.query;
-    if (url && id) {
-      this.service
-        .deleteYoutube(id.toString(), url.toString())
-        .then((result) => res.status(200).json(result))
-        .catch((e) => handleError(e, res, this.log));
-    } else {
-      return res.status(400).end("data cannot be empty");
-    }
-  }
+  
 }
