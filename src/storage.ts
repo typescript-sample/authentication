@@ -106,31 +106,41 @@ export class StorageService<T, ID> {
   config: StorageConfig;
   async uploadCoverImage(
     id: ID,
-    name: string,
-    data: string | Buffer
+    data: UploadData[], sizes?: number[]
   ): Promise<string> {
     const user: any = await this.loadData(id);
     if (!user) {
       return "";
     }
+    let urlUploaded: string = "";
     const oldUrl: string = user[this.model.cover];
     const galary: UploadInfo[] | undefined = user[this.model.gallery];
-    if (oldUrl && oldUrl.length > 0) {
-      if (shouldDelete(oldUrl, galary)) {
-        await this.deleteFile(this.storage.delete, oldUrl);
+    await this.deleteFileUpload(oldUrl, galary, sizes??this.sizesImage);
+    for (const [index, file] of data.entries()) {
+      //size
+      //
+      const urlOrigin = await this.storage.upload(
+        file.data,
+        file.name,
+        this.config.cover
+      );
+      const obj: any = {};
+
+
+      if (index === 0) {
+        obj[this.model.id] = id;
+        obj[this.model.cover] = urlOrigin;
+        urlUploaded = urlOrigin
+        const res = await this.patchData(obj);
+        if (res < 1) return "";
       }
     }
-    const url = await this.storage.upload(data, name, this.config.cover);
-    const obj: any = {};
-    obj[this.model.id] = id;
-    obj[this.model.cover] = url;
-    const res = await this.patchData(obj);
-    return res >= 1 ? url : "";
+
+    return urlUploaded;
   }
 
   async uploadImage(
     id: ID,
-
     data: UploadData[], sizes?: number[]
   ): Promise<string> {
     const user: any = await this.loadData(id);
@@ -163,7 +173,7 @@ export class StorageService<T, ID> {
 
     return urlUploaded;
   }
-
+ 
   async deleteFileUpload(oldUrl: string, galary: UploadInfo[] | undefined, sizes?: number[]) {
     //delete original file
     if (oldUrl && oldUrl.length > 0) {

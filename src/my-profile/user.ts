@@ -87,11 +87,7 @@ export interface MyProfileService {
   getMySettings(id: string): Promise<UserSettings | null>;
   saveMyProfile(user: User): Promise<number>;
   saveMySettings(id: string, settings: UserSettings): Promise<number>;
-  uploadCoverImage(
-    id: string,
-    name: string,
-    data: string | Buffer
-  ): Promise<string>;
+  uploadCoverImage(id: string, data: UploadData[],sizes?:number[]): Promise<string>;
   uploadImage(id: string, data: UploadData[],sizes?:number[]): Promise<string>;
   uploadGalleryFile(uploadGallery: UploadGallery): Promise<UploadInfo[]>;
   updateGallery(id: string, data: UploadInfo[]): Promise<boolean>;

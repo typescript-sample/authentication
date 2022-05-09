@@ -40,11 +40,7 @@ export interface UploadData {
 }
 
 export interface UploadService {
-  uploadCoverImage(
-    id: string,
-    name: string,
-    data: string | Buffer
-  ): Promise<string>;
+  uploadCoverImage(id: string, data: UploadData[],sizes?:number[]): Promise<string>;
   uploadImage(id: string, data: UploadData[],sizes?:number[]): Promise<string>;
   uploadGalleryFile(upload: Upload): Promise<UploadInfo[]>;
   updateGallery(id: string, data: UploadInfo[]): Promise<boolean>;
@@ -89,20 +85,26 @@ export class UploadController {
     }
   }
   uploadCover(req: Request, res: Response) {
-    if (!req || !req.file) {
+    if (!req || !req.files || req.files.length < 1) {
       res.status(400).end("require file");
     } else {
       const id = req.params[this.id];
       if (!id || id.length === 0) {
         res.status(400).end("id cannot be empty");
       } else {
-        const fileName = req.file.originalname;
-        const data = req.file.buffer;
-        const name = `${id.toString()}_${fileName}`;
+        let listFile: UploadData[] = [];
+        const generateStr = this.generateId();
+        (req.files as any).forEach((file: any) => {
+          const fileName = file.originalname;
+          const data = file.buffer;
+          const name = `${id.toString()}_${generateStr}_${fileName}`;
+          listFile.push({ name, data });
+        });
+       
         this.uploadService
-          .uploadCoverImage(id, name, data)
-          .then((result) => res.status(200).json(result))
-          .catch((e) => handleError(e, res, this.log));
+          .uploadCoverImage(id, listFile)
+          .then((result) => res.status(200).json(result).end())
+          .catch((e) => { console.log(e); handleError(e, res, this.log) });
       }
     }
   }

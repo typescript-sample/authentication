@@ -175,7 +175,7 @@ export function useContext(
   const storage = new Storage();
   const bucket = storage.bucket(conf.bucket);
   const storageRepository = new GoogleStorageRepository(bucket, storageConfig, map);
-  let sizesCover: number[] = [480, 768]
+  let sizesCover: number[] = [576, 768]
   let sizesImage: number[] = [40, 400]
   const myprofile = useMyProfileController(logger.error, db, conf.settings, storageRepository, deleteFile, generate, useBuildUrl(conf.bucket), sizesCover, sizesImage);
   const skillService = new StringService('skills', 'skill', sqlDB.query, sqlDB.execBatch);
