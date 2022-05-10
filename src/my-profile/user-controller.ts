@@ -6,7 +6,7 @@ import {
   respondModel,
 } from "express-ext";
 import { Log } from "onecore";
-import { UploadController } from "../upload-controller";
+import { UploadController } from "upload-express";
 import { UserSettings } from "../my-profile";
 import { MyProfileService } from "./user";
 
