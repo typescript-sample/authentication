@@ -36,7 +36,7 @@ export interface Config {
   signup: SignupTemplateConfig;
   password: PasswordTemplateConfig;
   mail: MailConfig;
-  settings: UserSettings;
+  settings: UserSettings; 
   bucket: string;
   storage: StorageConf;
 }

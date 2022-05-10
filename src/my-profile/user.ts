@@ -1,5 +1,5 @@
-import { Attributes, DateRange, Filter, Repository } from "onecore";
-import { UploadData } from "../upload-controller";
+import { Attributes, DateRange, Filter, Repository } from 'onecore';
+import { UploadData } from 'upload-express';
 
 export interface User {
   id: string;
@@ -56,7 +56,7 @@ export interface UploadInfo {
 }
 
 export interface UploadSize {
-  size:string,
+  size: string;
   url: string;
 }
 export interface FileUploadsCover {
@@ -87,8 +87,8 @@ export interface MyProfileService {
   getMySettings(id: string): Promise<UserSettings | null>;
   saveMyProfile(user: User): Promise<number>;
   saveMySettings(id: string, settings: UserSettings): Promise<number>;
-  uploadCoverImage(id: string, data: UploadData[],sizes?:number[]): Promise<string>;
-  uploadImage(id: string, data: UploadData[],sizes?:number[]): Promise<string>;
+  uploadCoverImage(id: string, data: UploadData[], sizes?: number[]): Promise<string>;
+  uploadImage(id: string, data: UploadData[], sizes?: number[]): Promise<string>;
   uploadGalleryFile(uploadGallery: UploadGallery): Promise<UploadInfo[]>;
   updateGallery(id: string, data: UploadInfo[]): Promise<boolean>;
   deleteGalleryFile(id: string, url: string): Promise<boolean>;
@@ -102,7 +102,7 @@ export const skillsModel: Attributes = {
     required: true,
   },
   hirable: {
-    type: "boolean",
+    type: 'boolean',
   },
 };
 export const fileUploadModel: Attributes = {
@@ -131,7 +131,7 @@ export const userSettingsModel: Attributes = {
   dateTimeFormat: {},
   timeFormat: {},
   notification: {
-    type: "boolean",
+    type: 'boolean',
   },
 };
 export const achievements: Attributes = {
@@ -141,43 +141,43 @@ export const achievements: Attributes = {
 export const userModel: Attributes = {
   id: {
     key: true,
-    match: "equal",
+    match: 'equal',
   },
   username: {},
   email: {
-    format: "email",
+    format: 'email',
     required: true,
-    match: "prefix",
+    match: 'prefix',
   },
   phone: {
-    format: "phone",
+    format: 'phone',
     required: true,
   },
   dateOfBirth: {
-    type: "datetime",
-    field: "date_of_birth",
+    type: 'datetime',
+    field: 'date_of_birth',
   },
   interests: {
-    type: "primitives",
+    type: 'primitives',
   },
   skills: {
-    type: "primitives",
+    type: 'primitives',
     typeof: skillsModel,
   },
   achievements: {
-    type: "primitives",
+    type: 'primitives',
     typeof: achievements,
   },
   settings: {
-    type: "object",
+    type: 'object',
     typeof: userSettingsModel,
   },
   uploadCover: {
-    type: "primitives",
+    type: 'primitives',
     typeof: fileUploadModel,
   },
   uploadGallery: {
-    type: "primitives",
+    type: 'primitives',
     typeof: fileUploadModel,
   },
 };

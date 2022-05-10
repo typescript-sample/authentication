@@ -45,7 +45,7 @@ export class MyProfileManager extends StorageService<User, string> implements My
       return user;
     });
   }
-  getMySettings(id: string): Promise<UserSettings | null> { 
+  getMySettings(id: string): Promise<UserSettings | null> {
     return this.repository.load(id)
       .then((user) =>
         user && user.settings ? user.settings : clone(this.settings)
@@ -67,6 +67,4 @@ export class MyProfileManager extends StorageService<User, string> implements My
       return [];
     });
   }
-
-
 }
