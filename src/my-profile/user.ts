@@ -10,7 +10,7 @@ export interface User {
   interests: string[];
   skills: Skill[];
   achievements: Achievement[];
-  settings: UserSettings;
+  settings?: UserSettings;
   avatarUrl?: string;
   title?: string;
   image?: UploadSize[];
@@ -139,7 +139,7 @@ export const achievements: Attributes = {
   description: {},
 };
 export const userModel: Attributes = {
-  id: {
+  userId: {
     key: true,
     match: 'equal',
   },

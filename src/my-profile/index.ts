@@ -10,10 +10,10 @@ export * from './user';
 export { MyProfileController };
 
 export function useMyProfileController(log: Log, db: Db, settings: UserSettings, storage: StorageRepository, deleteFile: Delete, generateId: Generate, buildUrl: BuildUrl, sizesCover: number[],
-  sizesImage: number[], config?: StorageConf, model?: ModelConf): MyProfileController {
+  sizesImage: number[], config?: StorageConf, model?: ModelConf, saveSkills?: (values: string[]) => Promise<number>, saveInterests?: (values: string[]) => Promise<number>): MyProfileController {
   const repository = new MongoUserRepository(db);
   const service = new MyProfileManager(repository, settings, storage, deleteFile, generateId, buildUrl, sizesCover, sizesImage, model, config);
-  return new MyProfileController(log, service, generateId, sizesCover, sizesImage);
+  return new MyProfileController(log, service, generateId, sizesCover, sizesImage, saveSkills, saveInterests);
 }
 
 export class MyProfileManager extends StorageService<User, string> implements MyProfileService {
@@ -40,7 +40,7 @@ export class MyProfileManager extends StorageService<User, string> implements My
   getMyProfile(id: string): Promise<User | null> {
     return this.repository.load(id).then((user) => {
       if (user) {
-        delete (user as any)['settings'];
+        delete user.settings;
       }
       return user;
     });
@@ -61,7 +61,6 @@ export class MyProfileManager extends StorageService<User, string> implements My
   getGalllery(id: string): Promise<UploadInfo[]> {
     return this.repository.load(id).then((user) => {
       if (user) {
-        delete (user as any)['settings'];
         return (user as any)[this.model.gallery];
       }
       return [];

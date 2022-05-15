@@ -36,7 +36,7 @@ export interface Config {
   signup: SignupTemplateConfig;
   password: PasswordTemplateConfig;
   mail: MailConfig;
-  settings: UserSettings; 
+  settings: UserSettings;
   bucket: string;
   storage: StorageConf;
 }
@@ -77,7 +77,7 @@ export function useContext(
     conf.auth.template.subject
   );
   const verifiedCodeRepository = new PasscodeRepository<string>(
-    db.collection("authenCode")
+    db.collection('authenCode')
   );
   const userRepository = new MongoUserRepository(
     db,
@@ -116,12 +116,12 @@ export function useContext(
     conf.signup.template.subject
   );
   const passcodeRepository = new PasscodeRepository<string>(
-    db.collection("signupCode")
+    db.collection('signupCode')
   );
   const signupRepository = useRepository<string, Signup>(
     db,
-    "user",
-    "authentication",
+    'user',
+    'authentication',
     conf.signup.userStatus,
     conf.signup.fields,
     conf.signup.maxPasswordAge,
@@ -150,7 +150,7 @@ export function useContext(
     conf.password.templates.reset.subject
   );
   const codeRepository = new PasscodeRepository<string>(
-    db.collection("passwordCode")
+    db.collection('passwordCode')
   );
   const passwordRepository = usePasswordRepository<string>(
     db,
@@ -171,17 +171,19 @@ export function useContext(
 
   const user = useUserController(logger.error, db);
 
-  const storageConfig: StorageConfig = { bucket: conf.bucket, public: true };
-  const storage = new Storage();
-  const bucket = storage.bucket(conf.bucket);
-  const storageRepository = new GoogleStorageRepository(bucket, storageConfig, map);
-  let sizesCover: number[] = [576, 768]
-  let sizesImage: number[] = [40, 400]
-  const myprofile = useMyProfileController(logger.error, db, conf.settings, storageRepository, deleteFile, generate, useBuildUrl(conf.bucket), sizesCover, sizesImage);
   const skillService = new StringService('skills', 'skill', sqlDB.query, sqlDB.execBatch);
   const skill = new QueryController<string[]>(logger.error, skillService.load, 'keyword');
   const interestService = new StringService('interests', 'interest', sqlDB.query, sqlDB.execBatch);
   const interest = new QueryController<string[]>(logger.error, interestService.load, 'keyword');
+
+  const storageConfig: StorageConfig = { bucket: conf.bucket, public: true };
+  const storage = new Storage();
+  const bucket = storage.bucket(conf.bucket);
+  const storageRepository = new GoogleStorageRepository(bucket, storageConfig, map);
+  const sizesCover: number[] = [576, 768];
+  const sizesImage: number[] = [40, 400];
+  const myprofile = useMyProfileController(logger.error, db, conf.settings, storageRepository, deleteFile, generate, useBuildUrl(conf.bucket), sizesCover, sizesImage, undefined, undefined, skillService.save, interestService.save);
+
   return { health, log, middleware, authentication, signup, password, myprofile, user, skill, interest };
 }
 export function generate(): string {
@@ -191,7 +193,7 @@ export function hasTwoFactors(userId: string): Promise<boolean> {
   return Promise.resolve(false);
 }
 export function useSend(conf: MailConfig): Send {
-  if (conf.provider === "sendgrid") {
+  if (conf.provider === 'sendgrid') {
     return new SendGridMailService(conf.key).send;
   } else {
     const transporter = nodemailer.createTransport(conf.smtp);
