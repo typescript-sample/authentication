@@ -5,6 +5,7 @@ import { UploadController } from 'upload-express';
 import { UserSettings } from '../my-profile';
 import { MyProfileService, User } from './user';
 
+export type Save = (values: string[]) => Promise<number>;
 export class MyProfileController extends UploadController {
   constructor(
     log: Log,
@@ -12,8 +13,9 @@ export class MyProfileController extends UploadController {
     generateId: () => string,
     sizesCover: number[],
     sizesImage: number[],
-    public saveSkills?: (values: string[]) => Promise<number>,
-    public saveInterests?: (values: string[]) => Promise<number>
+    public saveSkills?: Save,
+    public saveInterests?: Save,
+    public saveLookingFor?: Save,
   ) {
     super(log, service, service.getGalllery, generateId, sizesCover, sizesImage, 'id');
     this.getMyProfile = this.getMyProfile.bind(this);
@@ -57,12 +59,15 @@ export class MyProfileController extends UploadController {
         res.status(400).send('body and url are not matched');
         return;
       }
-      if (this.saveSkills && user.skills && user.skills.length > 0) {
+      if (this.saveSkills && user.skills) {
         const skills = user.skills.map(i => i.skill);
         this.saveSkills(skills);
       }
-      if (this.saveInterests && user.interests && user.interests.length > 0) {
+      if (this.saveInterests && user.interests) {
         this.saveInterests(user.interests);
+      }
+      if (this.saveLookingFor && user.lookingFor) {
+        this.saveLookingFor(user.lookingFor);
       }
       this.service
         .saveMyProfile(user)

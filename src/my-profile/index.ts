@@ -5,15 +5,15 @@ import { BuildUrl, Delete, Generate, Log } from 'onecore';
 import { clone } from 'signup-mongo';
 import { MongoUserRepository } from './mongo-user-repository';
 import { MyProfileService, User, UserRepository, UserSettings } from './user';
-import { MyProfileController } from './user-controller';
+import { MyProfileController, Save } from './user-controller';
 export * from './user';
 export { MyProfileController };
 
-export function useMyProfileController(log: Log, db: Db, settings: UserSettings, storage: StorageRepository, deleteFile: Delete, generateId: Generate, buildUrl: BuildUrl, sizesCover: number[],
-  sizesImage: number[], config?: StorageConf, model?: ModelConf, saveSkills?: (values: string[]) => Promise<number>, saveInterests?: (values: string[]) => Promise<number>): MyProfileController {
+export function useMyProfileController(log: Log, db: Db, settings: UserSettings, storage: StorageRepository, deleteFile: Delete, generateId: Generate, buildUrl: BuildUrl, saveSkills: Save|undefined, saveInterests: Save|undefined, saveLookingFor: Save|undefined, sizesCover: number[],
+sizesImage: number[], config?: StorageConf, model?: ModelConf, ): MyProfileController {
   const repository = new MongoUserRepository(db);
   const service = new MyProfileManager(repository, settings, storage, deleteFile, generateId, buildUrl, sizesCover, sizesImage, model, config);
-  return new MyProfileController(log, service, generateId, sizesCover, sizesImage, saveSkills, saveInterests);
+  return new MyProfileController(log, service, generateId, sizesCover, sizesImage, saveSkills, saveInterests, saveLookingFor);
 }
 
 export class MyProfileManager extends StorageService<User, string> implements MyProfileService {

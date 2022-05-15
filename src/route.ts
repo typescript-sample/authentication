@@ -34,6 +34,8 @@ export function route(app: Application, ctx: ApplicationContext): void {
 
   app.get('/skills', ctx.skill.query);
   app.get('/interests', ctx.interest.query);
+  app.get('/looking-for', ctx.lookingFor.query);
+
   app.post('/users/search', ctx.user.search);
   app.get('/users/search', ctx.user.search);
   app.get('/users/:id', ctx.user.load);

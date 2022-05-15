@@ -16,7 +16,10 @@ create table interests(
 	interest varchar(120) not null,
 	primary key (interest)
 );
-
+create table searchs (
+	item varchar(120) not null,
+	primary key (item)
+);
 insert into users (id, username, email, phone, date_of_birth) values ('ironman', 'tony.stark', 'tony.stark@gmail.com', '0987654321', '1963-03-25');
 insert into users (id, username, email, phone, date_of_birth) values ('spiderman', 'peter.parker', 'peter.parker@gmail.com', '0987654321', '1962-08-25');
 insert into users (id, username, email, phone, date_of_birth) values ('wolverine', 'james.howlett', 'james.howlett@gmail.com', '0987654321', '1974-11-16');
@@ -50,4 +53,7 @@ insert into interests(interest) values('badminton');
 insert into interests(interest) values('esport');
 insert into interests(interest) values('food');
 
+insert into searchs(item) values('friend');
+insert into searchs(item) values('room mate');
+insert into searchs(item) values('basketball team');
 -- insert into skills(skill) values ('java') on conflict(skill) do nothing
