@@ -1,7 +1,7 @@
 import { Attributes, DateRange, Filter, ViewRepository, ViewService } from 'onecore';
 
 export interface UserFilter extends Filter {
-  id?: string;
+  userId?: string;
   username?: string;
   email?: string;
   phone?: string;
@@ -9,7 +9,7 @@ export interface UserFilter extends Filter {
   interests?: string[];
 }
 export interface User {
-  id?: string;
+  userId?: string;
   username?: string;
   email?: string;
   phone?: string;
@@ -21,7 +21,7 @@ export interface UserService extends ViewService<User, string> {
 }
 
 export const userModel: Attributes = {
-  id: {
+  userId: {
     key: true,
     length: 40,
   },

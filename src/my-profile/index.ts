@@ -5,15 +5,15 @@ import { BuildUrl, Delete, Generate, Log } from 'onecore';
 import { clone } from 'signup-mongo';
 import { MongoUserRepository } from './mongo-user-repository';
 import { MyProfileService, User, UserRepository, UserSettings } from './user';
-import { MyProfileController } from './user-controller';
+import { MyProfileController, Save } from './user-controller';
 export * from './user';
 export { MyProfileController };
 
-export function useMyProfileController(log: Log, db: Db, settings: UserSettings, storage: StorageRepository, deleteFile: Delete, generateId: Generate, buildUrl: BuildUrl, sizesCover: number[],
-  sizesImage: number[], config?: StorageConf, model?: ModelConf): MyProfileController {
+export function useMyProfileController(log: Log, db: Db, settings: UserSettings, storage: StorageRepository, deleteFile: Delete, generateId: Generate, buildUrl: BuildUrl, saveSkills: Save|undefined, saveInterests: Save|undefined, saveLookingFor: Save|undefined, sizesCover: number[],
+sizesImage: number[], config?: StorageConf, model?: ModelConf, ): MyProfileController {
   const repository = new MongoUserRepository(db);
   const service = new MyProfileManager(repository, settings, storage, deleteFile, generateId, buildUrl, sizesCover, sizesImage, model, config);
-  return new MyProfileController(log, service, generateId, sizesCover, sizesImage);
+  return new MyProfileController(log, service, generateId, sizesCover, sizesImage, saveSkills, saveInterests, saveLookingFor);
 }
 
 export class MyProfileManager extends StorageService<User, string> implements MyProfileService {
@@ -41,8 +41,7 @@ export class MyProfileManager extends StorageService<User, string> implements My
     return this.repository.load(id).then((user) => {
       let rs = null
       if (user) {
-        delete (user as any)['settings'];
-        rs = { ...user, userId: user.id }
+        delete user.settings;
       }
       return rs;
     });
@@ -63,7 +62,6 @@ export class MyProfileManager extends StorageService<User, string> implements My
   getGalllery(id: string): Promise<UploadInfo[]> {
     return this.repository.load(id).then((user) => {
       if (user) {
-        delete (user as any)['settings'];
         return (user as any)[this.model.gallery];
       }
       return [];

@@ -22,7 +22,7 @@ export function route(app: Application, ctx: ApplicationContext): void {
   app.get('/my-profile/:id', ctx.myprofile.getMyProfile);
   app.get('/my-profile/:id/settings', ctx.myprofile.getMySettings);
   app.get('/my-profile/:id/fetchImageGalleryUploaded', ctx.myprofile.getGallery);
-  app.patch('/my-profile', ctx.myprofile.saveMyProfile);
+  app.patch('/my-profile/:id', ctx.myprofile.saveMyProfile);
   app.patch('/my-profile/:id/settings', ctx.myprofile.saveMySettings);
   app.post('/my-profile/:id/cover', parser.array('files'), ctx.myprofile.uploadCover);
   app.post('/my-profile/:id/upload', parser.array('files'), ctx.myprofile.uploadImage);
@@ -34,6 +34,8 @@ export function route(app: Application, ctx: ApplicationContext): void {
 
   app.get('/skills', ctx.skill.query);
   app.get('/interests', ctx.interest.query);
+  app.get('/looking-for', ctx.lookingFor.query);
+
   app.post('/users/search', ctx.user.search);
   app.get('/users/search', ctx.user.search);
   app.get('/users/:id', ctx.user.load);
