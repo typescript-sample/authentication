@@ -156,6 +156,9 @@ Nếu đường link đó không hoạt động, hãy sao chép đường link �
     cover: 'cover',
     gallery: 'gallery'
   },
+  model:{
+    id:'userId'
+  },
   settings: {
     language: 'en-us',
     dateFormat: 'dd/mm/yyyy',

@@ -39,6 +39,9 @@ export interface Config {
   settings: UserSettings;
   bucket: string;
   storage: StorageConf;
+  model:{
+    id:string
+  }
 }
 export interface ApplicationContext {
   health: HealthController;
@@ -176,7 +179,7 @@ export function useContext(
   const skill = new QueryController<string[]>(logger.error, skillService.load, 'keyword');
   const interestService = new StringService('interests', 'interest', sqlDB.query, sqlDB.execBatch);
   const interest = new QueryController<string[]>(logger.error, interestService.load, 'keyword');
-  const lookingForService = new StringService('searchs', 'item', sqlDB.query, sqlDB.execBatch);
+  const lookingForService = new StringService('searchs', 'item', sqlDB.query, sqlDB.execBatch); 
   const lookingFor = new QueryController<string[]>(logger.error, interestService.load, 'keyword');
 
   const storageConfig: StorageConfig = { bucket: conf.bucket, public: true };
@@ -185,7 +188,7 @@ export function useContext(
   const storageRepository = new GoogleStorageRepository(bucket, storageConfig, map);
   const sizesCover: number[] = [576, 768];
   const sizesImage: number[] = [40, 400];
-  const myprofile = useMyProfileController(logger.error, db, conf.settings, storageRepository, deleteFile, generate, useBuildUrl(conf.bucket), skillService.save, interestService.save, lookingForService.save, sizesCover, sizesImage);
+  const myprofile = useMyProfileController(logger.error, db, conf.settings, storageRepository, deleteFile, generate, useBuildUrl(conf.bucket), skillService.save, interestService.save, lookingForService.save, sizesCover, sizesImage,undefined,conf.model);
 
   return { health, log, middleware, authentication, signup, password, myprofile, user, skill, interest, lookingFor };
 }
