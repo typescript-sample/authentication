@@ -20,7 +20,7 @@ const middleware = new MiddlewareLogger(logger.info, conf.middleware);
 const app = express();
 app.use(allow(conf.allow), json(), cookieParser(), middleware.log);
 
-const pool = new Pool (conf.db);
+const pool = new Pool (conf.db.query); 
 const db = new PoolManager(pool);
 connectToDb(`${conf.mongo.uri}`, `${conf.mongo.db}`).then(mongodb => {
   const ctx = useContext(mongodb, db, logger, middleware, conf);

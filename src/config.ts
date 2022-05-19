@@ -26,12 +26,22 @@ export const config = {
     db: 'user'
   },
   db: {
-    user: 'postgres',
-    host: 'localhost',
-    password: 'abcd1234',
-    database: 'masterdata',
-    port: 5432
+    query: {
+      user: 'postgres',
+      host: 'localhost',
+      password: 'abcd1234',
+      database: 'masterdata',
+      port: 5432
+    },
+    appreciation: {
+      user: 'postgres',
+      host: 'localhost',
+      password: 'abcd1234',
+      database: 'masterdata',
+      port: 5432
+    }
   },
+
   secret: 'secret',
   auth: {
     token: {
@@ -156,8 +166,8 @@ Nếu đường link đó không hoạt động, hãy sao chép đường link �
     cover: 'cover',
     gallery: 'gallery'
   },
-  model:{
-    id:'userId'
+  model: {
+    id: 'userId'
   },
   settings: {
     language: 'en-us',
