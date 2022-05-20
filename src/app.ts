@@ -22,8 +22,10 @@ app.use(allow(conf.allow), json(), cookieParser(), middleware.log);
 
 const pool = new Pool (conf.db.query); 
 const db = new PoolManager(pool);
+const poolMain = new Pool (conf.db.appreciation); 
+const dbMain = new PoolManager(poolMain);
 connectToDb(`${conf.mongo.uri}`, `${conf.mongo.db}`).then(mongodb => {
-  const ctx = useContext(mongodb, db, logger, middleware, conf);
+  const ctx = useContext(mongodb, db, logger, middleware, conf,dbMain);
   route(app, ctx);
   http.createServer(app).listen(conf.port, () => {
     console.log('Start mongo server at port ' + conf.port);
