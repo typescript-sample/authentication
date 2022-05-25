@@ -2,17 +2,18 @@ export const config = {
   port: 8082,
   secure: false,
   allow: {
-    origin: 'http://localhost:3000',
+    origin: '*',
     credentials: 'true',
     methods: 'GET,PUT,POST,DELETE,OPTIONS,PATCH',
     headers: 'Access-Control-Allow-Headers, Authorization, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers'
   },
   log: {
-    level: 'info',
+    level: 'debug',
     map: {
       time: '@timestamp',
       msg: 'message'
-    }
+    },
+    db:true
   },
   middleware: {
     log: true,
@@ -36,8 +37,8 @@ export const config = {
     appreciation: {
       user: 'postgres',
       host: 'localhost',
-      password: 'abcd1234',
-      database: 'masterdata',
+      password: '12345',
+      database: 'user',
       port: 5432
     }
   },
@@ -147,16 +148,16 @@ Nếu đường link đó không hoạt động, hãy sao chép đường link �
     provider: 'smtp',
     from: {
       name: 'Supporter',
-      email: 'test@gmail.com'
+      email: 'pnhattuan@tma.com.vn'
     },
-    key: '',
+    key: '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',
     smtp: {
       host: 'smtp.gmail.com',
       port: 465,
       secure: true,
       auth: {
-        user: '',
-        pass: ''
+        user: 'testsmtp318@gmail.com',
+        pass: 'vaseaqiscbgedkga'
       }
     }
   },

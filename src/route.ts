@@ -39,4 +39,13 @@ export function route(app: Application, ctx: ApplicationContext): void {
   app.post('/users/search', ctx.user.search);
   app.get('/users/search', ctx.user.search);
   app.get('/users/:id', ctx.user.load);
+
+  app.post('/appreciation/search', ctx.appreciation.search);
+  app.get('/appreciation/search', ctx.appreciation.search);
+  app.get('/appreciation/:id', ctx.appreciation.load);
+  app.post('/appreciation', ctx.appreciation.create);
+  app.put('/appreciation/:id', ctx.appreciation.update);
+  app.patch('/appreciation/:id', ctx.appreciation.patch);
+  app.delete('/appreciation/:id', ctx.appreciation.delete);
+  
 }

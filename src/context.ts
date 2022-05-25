@@ -1,4 +1,5 @@
 import { Storage } from '@google-cloud/storage';
+import { AppreciationController, useAppreciationController } from './appreciation';
 import { AuthenticationController } from 'authen-express';
 import { MongoUserRepository } from 'authen-mongo';
 import { Authenticator, AuthTemplateConfig, CodeMailSender, initializeStatus, User } from 'authen-service';
@@ -26,7 +27,6 @@ import { createValidator } from 'xvalidators';
 
 import { MyProfileController, useMyProfileController, UserSettings } from './my-profile';
 import { UserController, useUserController } from './user';
-
 resources.createValidator = createValidator;
 
 export interface Config {
@@ -55,7 +55,7 @@ export interface ApplicationContext {
   skill: QueryController<string[]>;
   interest: QueryController<string[]>;
   lookingFor: QueryController<string[]>;
-  appreciation: QueryController<string[]>;
+  appreciation: AppreciationController;
 }
 
 export function useContext(
@@ -184,8 +184,7 @@ export function useContext(
   const lookingForService = new StringService('searchs', 'item', sqlDB.query, sqlDB.execBatch);
   const lookingFor = new QueryController<string[]>(logger.error, interestService.load, 'keyword');
 
-  const appreciationService = new StringService('appreciation', 'userId', mainDB.query, mainDB.execBatch);
-  const appreciation = new QueryController<string[]>(logger.error, appreciationService.load, 'keyword');
+  const appreciation = useAppreciationController(logger.error, mainDB)
 
   const storageConfig: StorageConfig = { bucket: conf.bucket, public: true };
   const storage = new Storage();
