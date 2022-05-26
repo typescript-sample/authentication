@@ -147,17 +147,17 @@ Nếu đường link đó không hoạt động, hãy sao chép đường link �
   mail: {
     provider: 'smtp',
     from: {
-      name: 'Supporter',
-      email: 'pnhattuan@tma.com.vn'
+      name: ' ',
+      email: ' '
     },
-    key: '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',
+    key: ' ',
     smtp: {
       host: 'smtp.gmail.com',
       port: 465,
       secure: true,
       auth: {
-        user: 'testsmtp318@gmail.com',
-        pass: 'vaseaqiscbgedkga'
+        user: ' ',
+        pass: ' '
       }
     }
   },
