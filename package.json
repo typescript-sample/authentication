@@ -37,6 +37,7 @@
     "one-storage": "^0.1.3",
     "onecore": "^0.0.34",
     "passcode-mongo": "^0.0.3",
+    "password-client": "^0.1.2",
     "password-express": "^0.0.2",
     "password-mongo": "^0.0.1",
     "password-service": "^0.0.2",
