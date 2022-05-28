@@ -7,6 +7,11 @@ export interface UserFilter extends Filter {
   phone?: string;
   dateOfBirth?: Date | DateRange;
   interests?: string[];
+  skills?: Skill[];
+}
+export interface Skill {
+  skill: string;
+  hirable?: boolean;
 }
 export interface User {
   userId?: string;

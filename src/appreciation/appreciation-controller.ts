@@ -5,5 +5,4 @@ export class AppreciationController extends Controller<Appreciation, string, App
   constructor(log: Log, userService: AppreciationService) {
     super(log, userService);
   }
- 
 }

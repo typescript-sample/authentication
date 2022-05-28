@@ -1,5 +1,4 @@
 import { Storage } from '@google-cloud/storage';
-import { AppreciationController, useAppreciationController } from './appreciation';
 import { AuthenticationController } from 'authen-express';
 import { MongoUserRepository } from 'authen-mongo';
 import { Authenticator, AuthTemplateConfig, CodeMailSender, initializeStatus, User } from 'authen-service';
@@ -24,6 +23,7 @@ import { SignupController } from 'signup-express';
 import { useRepository } from 'signup-mongo';
 import { initStatus, Signup, SignupSender, SignupService, SignupTemplateConfig, Validator } from 'signup-service';
 import { createValidator } from 'xvalidators';
+import { AppreciationController, useAppreciationController } from './appreciation';
 
 import { MyProfileController, useMyProfileController, UserSettings } from './my-profile';
 import { UserController, useUserController } from './user';
@@ -41,7 +41,7 @@ export interface Config {
   storage: StorageConf;
   model: {
     id: string
-  }
+  };
 }
 export interface ApplicationContext {
   health: HealthController;
@@ -184,7 +184,7 @@ export function useContext(
   const lookingForService = new StringService('searchs', 'item', sqlDB.query, sqlDB.execBatch);
   const lookingFor = new QueryController<string[]>(logger.error, interestService.load, 'keyword');
 
-  const appreciation = useAppreciationController(logger.error, mainDB)
+  const appreciation = useAppreciationController(logger.error, mainDB);
 
   const storageConfig: StorageConfig = { bucket: conf.bucket, public: true };
   const storage = new Storage();

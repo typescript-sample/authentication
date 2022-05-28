@@ -1,8 +1,8 @@
 import { Log, Manager, Search } from 'onecore';
 import { DB, SearchBuilder } from 'query-core';
+import { TemplateMap, useQuery } from 'query-mappers';
 import { Appreciation, AppreciationFilter, AppreciationModel, AppreciationRepository, AppreciationService } from './appreciation';
 import { AppreciationController } from './appreciation-controller';
-import { TemplateMap, useQuery } from 'query-mappers';
 export * from './appreciation-controller';
 export { AppreciationController };
 
@@ -14,7 +14,7 @@ export class AppreciationManager extends Manager<Appreciation, string, Appreciat
   }
 
   test(obj: Appreciation, ctx?: any): Promise<number> {
-    return new Promise(()=>1);
+    return new Promise(() => 1);
     // return this.repository.insert(obj, ctx);
   }
 

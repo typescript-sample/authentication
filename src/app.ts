@@ -22,10 +22,7 @@ const app = express();
 app.use(allow(conf.allow), json(), cookieParser(), middleware.log);
 const pool = new Pool(conf.db.query);
 const db = new PoolManager(pool);
-const poolMain = new Pool(conf.db.appreciation);
-const dbMain = new PoolManager(poolMain);
-const logger2 = createLogger(conf.log);
-const dbLog = log(new PoolManager(poolMain), true, logger2,'sql')
+const dbLog = log(new PoolManager(new Pool(conf.db.appreciation)), true, logger, 'sql');
 connectToDb(`${conf.mongo.uri}`, `${conf.mongo.db}`).then(mongodb => {
   const ctx = useContext(mongodb, db, logger, middleware, conf, dbLog);
   route(app, ctx);

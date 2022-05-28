@@ -13,7 +13,7 @@ export const config = {
       time: '@timestamp',
       msg: 'message'
     },
-    db:true
+    db: true
   },
   middleware: {
     log: true,
