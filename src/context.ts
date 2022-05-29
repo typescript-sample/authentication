@@ -25,7 +25,7 @@ import { initStatus, Signup, SignupSender, SignupService, SignupTemplateConfig, 
 import { createValidator } from 'xvalidators';
 import { AppreciationController, useAppreciationController } from './appreciation';
 import { ArticleController, useArticleController } from './article';
-import { LocationController, useLocationController } from './location';
+import { LocationController, LocationRateController, useLocationController, useLocationRateController } from './location';
 import { ArticleController as MyArticleController, useMyArticleController } from './my-articles';
 
 import { MyProfileController, useMyProfileController, UserSettings } from './my-profile';
@@ -58,6 +58,7 @@ export interface ApplicationContext {
   lookingFor: QueryController<string[]>;
   appreciation: AppreciationController;
   location: LocationController;
+  rate: LocationRateController;
   article: ArticleController;
   myarticles: MyArticleController;
 }
@@ -200,12 +201,13 @@ export function useContext(
   const myprofile = useMyProfileController(logger.error, db, conf.settings, storageRepository, deleteFile, generate, useBuildUrl(conf.bucket), skillService.save, interestService.save, lookingForService.save, sizesCover, sizesImage, undefined, conf.model);
 
   const location = useLocationController(logger.error, locationDB);
+  const rate = useLocationRateController(logger.error, locationDB);
   const article = useArticleController(logger.error, locationDB);
-  const myarticles = useMyArticleController(logger.error, db);
+  const myarticles = useMyArticleController(logger.error, locationDB);
 
-  return { health, log, middleware, authentication, signup, password, myprofile, user,
-    skill, interest, lookingFor, appreciation,
-    location, article, myarticles };
+  return { health, log, middleware, authentication, signup, password,
+    myprofile, user, skill, interest, lookingFor, appreciation,
+    location, rate, article, myarticles };
 }
 export function generate(): string {
   return shortid.generate();

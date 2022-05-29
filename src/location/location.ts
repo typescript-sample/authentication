@@ -10,7 +10,13 @@ export interface LocationFilter extends Filter {
   longitude?: number;
   radius?: number;
 }
-
+export interface RateFilter extends Filter {
+  id: string;
+  review?: string;
+  locationId?: string;
+  userId?: string;
+  rateTime: Date;
+}
 export interface Location {
   id?: string;
   name?: string;
@@ -53,14 +59,15 @@ export interface LocationInfoRepository extends Repository<LocationInfo, string>
 
 export interface LocationService extends ViewService<Location, string> {
   /*
-  getLocationsByTypeInRadius?(type: string, raidus: number): Promise<Location[]>;
   saveLocation?(userId: string, locationId: string): Promise<boolean>;
   removeLocation?(userId: string, locationId: string): Promise<boolean>;
   getLocationsOfUser?(userId: string): Promise<Location[]>;
   */
+  getLocationsByTypeInRadius?(type: string, radius: number): Promise<Location[]>;
   rate(rate: Rate): Promise<boolean>;
 }
-
+export interface RateService extends ViewService<Rate, string> {
+}
 export const locationModel: Attributes = {
   id: {
     key: true,

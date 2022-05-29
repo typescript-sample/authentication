@@ -54,6 +54,10 @@ export function route(app: Application, ctx: ApplicationContext): void {
   app.get('/locations/:id', ctx.location.load);
   app.post('/locations/rateLocation', ctx.location.rate);
 
+  app.get('/location-rates/search', ctx.rate.search);
+  app.post('/location-rates/search', ctx.rate.search);
+  app.get('/location-rates/:id', ctx.rate.load);
+
   app.post('/articles/search', ctx.article.search);
   app.get('/articles/search', ctx.article.search);
   app.get('/articles/:id', ctx.article.load);

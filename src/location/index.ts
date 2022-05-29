@@ -1,15 +1,18 @@
 import { Db } from 'mongodb';
-import { PointMapper, SearchBuilder } from 'mongodb-extension';
+import { buildQuery, PointMapper, SearchBuilder } from 'mongodb-extension';
 import { Log, ViewManager } from 'onecore';
 import shortid from 'shortid';
-import { Location, LocationFilter, LocationInfo, LocationInfoRepository, locationModel, LocationRepository, LocationService, Rate, RateRepository } from './location';
+import { Location, LocationFilter, LocationInfo, LocationInfoRepository, locationModel, LocationRepository, LocationService, Rate, RateFilter, rateModel, RateRepository, RateService } from './location';
 import { LocationController } from './location-controller';
 import { MongoLocationInfoRepository } from './mongo-location-info-repository';
 import { MongoLocationRateRepository } from './mongo-location-rate-repository';
-import { MongoLocationRepository } from './mongo-location-repository';
-import { query } from './mongo-query';
 export * from './location';
 export { LocationController };
+export { LocationRateController };
+
+import { MongoLocationRepository } from './mongo-location-repository';
+import { query } from './mongo-query';
+import { LocationRateController } from './rate-controller';
 
 export class LocationManager extends ViewManager<Location, string> implements LocationService {
   constructor(private repository: LocationRepository, private rateRepository: RateRepository, private infoRepository: LocationInfoRepository) {
@@ -35,7 +38,6 @@ export class LocationManager extends ViewManager<Location, string> implements Lo
     if (!info || typeof info[('rate' + rate.rate.toString()) as keyof LocationInfo ] === 'undefined') {
       return false;
     }
-
     if (rate.id) {
       const dbRate = await this.rateRepository.load(rate.id);
       if (!dbRate) {
@@ -63,6 +65,11 @@ export class LocationManager extends ViewManager<Location, string> implements Lo
   }
 }
 
+export class RateManagaer extends ViewManager<Rate, string>implements RateService {
+  constructor(private repository: RateRepository) {
+    super(repository);
+  }
+}
 export function useLocationController(log: Log, db: Db): LocationController {
   const mapper = new PointMapper<Location>('geo', 'latitude', 'longitude');
   const builder = new SearchBuilder<Location, LocationFilter>(db, 'location', query, locationModel, mapper.fromPoint);
@@ -71,4 +78,11 @@ export function useLocationController(log: Log, db: Db): LocationController {
   const infoRepository = new MongoLocationInfoRepository(db);
   const service = new LocationManager(repository, rateRepository, infoRepository);
   return new LocationController(log, builder.search, service);
+}
+
+export function useLocationRateController(log: Log, db: Db): LocationRateController {
+  const builder = new SearchBuilder<Rate, RateFilter>(db, 'locationRate', buildQuery, rateModel);
+  const repository = new MongoLocationRateRepository(db);
+  const service = new RateManagaer(repository);
+  return new LocationRateController(log, builder.search, service);
 }

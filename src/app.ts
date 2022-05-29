@@ -25,8 +25,6 @@ const queryDB = new PoolManager(pool);
 const db = log(new PoolManager(new Pool(conf.db.appreciation)), true, logger, 'sql');
 connectToDb(`${conf.db.authentication.uri}`, `${conf.db.authentication.db}`).then(mongodb => {
   connectToDb(`${conf.db.location.uri}`, `${conf.db.location.db}`).then(locationDB => {
-    console.log(conf.db.location.uri);
-    console.log(conf.db.location.db);
     const ctx = useContext(mongodb, queryDB, logger, middleware, conf, db, locationDB);
     route(app, ctx);
     http.createServer(app).listen(conf.port, () => {
