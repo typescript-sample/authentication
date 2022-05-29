@@ -2,7 +2,6 @@ import { FilterQuery } from 'mongodb';
 import { User, UserFilter } from './user';
 
 export function query(filter: UserFilter): FilterQuery<User> {
-  console.log(JSON.stringify(filter));
   const q: any = {};
   if (!isEmpty(filter.email)) {
     q.email = new RegExp(`^${filter.email}`);

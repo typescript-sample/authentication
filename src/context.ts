@@ -11,7 +11,7 @@ import { MailConfig, MailService, Send } from 'mail-core';
 import { Db } from 'mongodb';
 import { MongoChecker } from 'mongodb-extension';
 import nodemailer from 'nodemailer';
-import { StorageConf } from 'one-storage';
+import { ModelConf, StorageConf } from 'one-storage';
 import { PasscodeRepository } from 'passcode-mongo';
 import { PasswordController } from 'password-express';
 import { usePasswordRepository } from 'password-mongo';
@@ -24,6 +24,7 @@ import { useRepository } from 'signup-mongo';
 import { initStatus, Signup, SignupSender, SignupService, SignupTemplateConfig, Validator } from 'signup-service';
 import { createValidator } from 'xvalidators';
 import { AppreciationController, useAppreciationController } from './appreciation';
+import { LocationController, useLocationController } from './location';
 
 import { MyProfileController, useMyProfileController, UserSettings } from './my-profile';
 import { UserController, useUserController } from './user';
@@ -39,9 +40,7 @@ export interface Config {
   settings: UserSettings;
   bucket: string;
   storage: StorageConf;
-  model: {
-    id: string
-  };
+  model: ModelConf;
 }
 export interface ApplicationContext {
   health: HealthController;
@@ -56,15 +55,17 @@ export interface ApplicationContext {
   interest: QueryController<string[]>;
   lookingFor: QueryController<string[]>;
   appreciation: AppreciationController;
+  location: LocationController;
 }
 
 export function useContext(
   db: Db,
-  sqlDB: DB,
+  queryDB: DB,
   logger: Logger,
   midLogger: Middleware,
   conf: Config,
   mainDB: DB,
+  locationDB: Db,
 ): ApplicationContext {
   const log = new LogController(logger);
   const middleware = new MiddlewareController(midLogger);
@@ -177,11 +178,11 @@ export function useContext(
 
   const user = useUserController(logger.error, db);
 
-  const skillService = new StringService('skills', 'skill', sqlDB.query, sqlDB.execBatch);
+  const skillService = new StringService('skills', 'skill', queryDB.query, queryDB.exec);
   const skill = new QueryController<string[]>(logger.error, skillService.load, 'keyword');
-  const interestService = new StringService('interests', 'interest', sqlDB.query, sqlDB.execBatch);
+  const interestService = new StringService('interests', 'interest', queryDB.query, queryDB.exec);
   const interest = new QueryController<string[]>(logger.error, interestService.load, 'keyword');
-  const lookingForService = new StringService('searchs', 'item', sqlDB.query, sqlDB.execBatch);
+  const lookingForService = new StringService('searchs', 'item', queryDB.query, queryDB.exec);
   const lookingFor = new QueryController<string[]>(logger.error, interestService.load, 'keyword');
 
   const appreciation = useAppreciationController(logger.error, mainDB);
@@ -194,7 +195,9 @@ export function useContext(
   const sizesImage: number[] = [40, 400];
   const myprofile = useMyProfileController(logger.error, db, conf.settings, storageRepository, deleteFile, generate, useBuildUrl(conf.bucket), skillService.save, interestService.save, lookingForService.save, sizesCover, sizesImage, undefined, conf.model);
 
-  return { health, log, middleware, authentication, signup, password, myprofile, user, skill, interest, lookingFor, appreciation };
+  const location = useLocationController(logger.error, db);
+
+  return { health, log, middleware, authentication, signup, password, myprofile, user, skill, interest, lookingFor, appreciation, location };
 }
 export function generate(): string {
   return shortid.generate();

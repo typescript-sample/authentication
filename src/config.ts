@@ -22,11 +22,15 @@ export const config = {
     status: 'status',
     size: 'size'
   },
-  mongo: {
-    uri: 'mongodb+srv://dbUser:Demoaccount1@projectdemo.g0lah.mongodb.net',
-    db: 'user'
-  },
   db: {
+    authentication: {
+      uri: 'mongodb+srv://dbUser:Demoaccount1@projectdemo.g0lah.mongodb.net',
+      db: 'user'
+    },
+    location: {
+      uri: 'mongodb+srv://dbUser:Demoaccount1@projectdemo.g0lah.mongodb.net',
+      db: 'location'
+    },
     query: {
       user: 'postgres',
       host: 'localhost',
@@ -42,7 +46,6 @@ export const config = {
       port: 5432
     }
   },
-
   secret: 'secret',
   auth: {
     token: {

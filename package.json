@@ -42,7 +42,7 @@
     "password-mongo": "^0.0.1",
     "password-service": "^0.0.2",
     "pg": "^8.7.3",
-    "pg-extension": "^0.1.2",
+    "pg-extension": "^0.1.4",
     "query-core": "^0.1.18",
     "query-mappers": "^0.0.3",
     "reflectx": "^0.0.10",

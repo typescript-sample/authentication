@@ -48,4 +48,9 @@ export function route(app: Application, ctx: ApplicationContext): void {
   app.put('/appreciation/:id', ctx.appreciation.update);
   app.patch('/appreciation/:id', ctx.appreciation.patch);
   app.delete('/appreciation/:id', ctx.appreciation.delete);
+
+  app.post('/locations/search', ctx.location.search);
+  app.get('/locations/search', ctx.location.search);
+  app.get('/locations/:id', ctx.location.load);
+  app.post('/locations/rateLocation', ctx.location.rate);
 }
