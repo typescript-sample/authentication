@@ -24,7 +24,9 @@ import { useRepository } from 'signup-mongo';
 import { initStatus, Signup, SignupSender, SignupService, SignupTemplateConfig, Validator } from 'signup-service';
 import { createValidator } from 'xvalidators';
 import { AppreciationController, useAppreciationController } from './appreciation';
+import { ArticleController, useArticleController } from './article';
 import { LocationController, useLocationController } from './location';
+import { ArticleController as MyArticleController, useMyArticleController } from './my-articles';
 
 import { MyProfileController, useMyProfileController, UserSettings } from './my-profile';
 import { UserController, useUserController } from './user';
@@ -56,6 +58,8 @@ export interface ApplicationContext {
   lookingFor: QueryController<string[]>;
   appreciation: AppreciationController;
   location: LocationController;
+  article: ArticleController;
+  myarticles: MyArticleController;
 }
 
 export function useContext(
@@ -195,9 +199,13 @@ export function useContext(
   const sizesImage: number[] = [40, 400];
   const myprofile = useMyProfileController(logger.error, db, conf.settings, storageRepository, deleteFile, generate, useBuildUrl(conf.bucket), skillService.save, interestService.save, lookingForService.save, sizesCover, sizesImage, undefined, conf.model);
 
-  const location = useLocationController(logger.error, db);
+  const location = useLocationController(logger.error, locationDB);
+  const article = useArticleController(logger.error, locationDB);
+  const myarticles = useMyArticleController(logger.error, db);
 
-  return { health, log, middleware, authentication, signup, password, myprofile, user, skill, interest, lookingFor, appreciation, location };
+  return { health, log, middleware, authentication, signup, password, myprofile, user,
+    skill, interest, lookingFor, appreciation,
+    location, article, myarticles };
 }
 export function generate(): string {
   return shortid.generate();

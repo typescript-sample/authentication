@@ -19,7 +19,7 @@ export class LocationController extends LoadSearchHandler<Location, string, Loca
         res.status(getStatusCode(errors)).json(errors).end();
       } else {
         this.service.rate(rate).then(rs => {
-          res.json(rs);
+          res.json(rs).end();
         }).catch(err => handleError(err, res, this.log));
       }
     }).catch(err => handleError(err, res, this.log));

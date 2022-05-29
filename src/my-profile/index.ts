@@ -39,10 +39,10 @@ export class MyProfileManager extends StorageService<User, string> implements My
   }
   getMyProfile(id: string): Promise<User | null> {
     return this.repository.load(id).then((user) => {
-      let rs = null
+      let rs = null;
       if (user) {
         delete user.settings;
-        rs = user
+        rs = user;
       }
       return rs;
     });
@@ -59,7 +59,6 @@ export class MyProfileManager extends StorageService<User, string> implements My
   saveMySettings(id: string, settings: UserSettings): Promise<number> {
     return this.repository.patch({ id, settings });
   }
-
   getGalllery(id: string): Promise<UploadInfo[]> {
     return this.repository.load(id).then((user) => {
       if (user) {

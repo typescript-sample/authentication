@@ -18,7 +18,7 @@ export function query(filter: LocationFilter): FilterQuery<Location> {
   let skipDescription = false;
   if (!isEmpty(filter.description)) {
     skipDescription = true;
-    q.name = new RegExp(`^${filter.description}`);
+    q.description = new RegExp(`\\w*${filter.description}\\w*`);
   }
   if (!isEmpty(filter.q)) {
     const or: any[] = [];
@@ -30,6 +30,7 @@ export function query(filter: LocationFilter): FilterQuery<Location> {
     }
     q.$or = or;
   }
+  console.log(JSON.stringify(q));
   return q;
 }
 export function isEmpty(s?: string): boolean {
