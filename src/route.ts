@@ -69,4 +69,5 @@ export function route(app: Application, ctx: ApplicationContext): void {
   app.put('/my-articles/:id', ctx.myarticles.update);
   app.patch('/my-articles/:id', ctx.myarticles.patch);
   app.delete('/my-articles/:id', ctx.myarticles.delete);
+  app.delete('/my-articles/userId', ctx.myarticles.delete);
 }

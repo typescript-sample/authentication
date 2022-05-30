@@ -6,6 +6,7 @@ export interface ArticleFilter extends Filter {
   type?: string;
   tags?: string[];
   status?: string[]|string;
+  authorId?:string;
 }
 export interface Article {
   id?: string;
@@ -15,6 +16,7 @@ export interface Article {
   content?: string;
   tags?: string[];
   status?: string;
+  authorId?:string;
 }
 export interface ArticleRepository extends Repository<Article, string> {
 }
@@ -24,6 +26,10 @@ export interface ArticleService extends Service<Article, string, ArticleFilter> 
 export const articleModel: Attributes = {
   id: {
     key: true
+  },
+  authorId: {
+    required: true,
+    q: true
   },
   name: {
     required: true,
