@@ -173,6 +173,12 @@ Nếu đường link đó không hoạt động, hãy sao chép đường link �
   model: {
     id: 'userId'
   },
+  modelAppreciation: {
+    id: 'id',
+    payload: 'payload',
+    createdAt:'createdAt',
+    updatedAt:'updatedAt',
+  },
   settings: {
     language: 'en-us',
     dateFormat: 'dd/mm/yyyy',

@@ -48,6 +48,17 @@ export function route(app: Application, ctx: ApplicationContext): void {
   app.put('/appreciation/:id', ctx.appreciation.update);
   app.patch('/appreciation/:id', ctx.appreciation.patch);
   app.delete('/appreciation/:id', ctx.appreciation.delete);
+  app.post('/appreciation/useful', ctx.appreciation.usefulAppreciation);
+  ///appreciation reply
+  app.get('/appreciation-reply', ctx.appreciationReply.search);
+  app.post('/appreciation-reply/search', ctx.appreciationReply.search);
+  app.get('/appreciation-reply/search', ctx.appreciationReply.search);
+  app.get('/appreciation-reply/:id', ctx.appreciationReply.load);
+  app.post('/appreciation-reply', ctx.appreciationReply.insert);
+  app.put('/appreciation-reply/:id', ctx.appreciationReply.update);
+  app.patch('/appreciation-reply/:id', ctx.appreciationReply.patch);
+  app.delete('/appreciation-reply/:id', ctx.appreciationReply.delete);
+  app.post('/appreciation-reply/useful', ctx.appreciationReply.usefulAppreciation);
 
   app.post('/locations/search', ctx.location.search);
   app.get('/locations/search', ctx.location.search);

@@ -4,7 +4,7 @@ import { MongoUserRepository } from 'authen-mongo';
 import { Authenticator, AuthTemplateConfig, CodeMailSender, initializeStatus, User } from 'authen-service';
 import { compare } from 'bcrypt';
 import { Comparator } from 'bcrypt-plus';
-import { HealthController, LogController, Logger, Middleware, MiddlewareController, QueryController, resources } from 'express-ext';
+import { HealthController, LogController, Logger, Middleware, MiddlewareController, QueryController, resources, useBuild ,ModelConfig} from 'express-ext';
 import { deleteFile, GoogleStorageRepository, map, StorageConfig, useBuildUrl } from 'google-storage';
 import { generateToken } from 'jsonwebtoken-plus';
 import { MailConfig, MailService, Send } from 'mail-core';
@@ -12,6 +12,7 @@ import { Db } from 'mongodb';
 import { MongoChecker } from 'mongodb-extension';
 import nodemailer from 'nodemailer';
 import { ModelConf, StorageConf } from 'one-storage';
+
 import { PasscodeRepository } from 'passcode-mongo';
 import { PasswordController } from 'password-express';
 import { usePasswordRepository } from 'password-mongo';
@@ -23,7 +24,7 @@ import { SignupController } from 'signup-express';
 import { useRepository } from 'signup-mongo';
 import { initStatus, Signup, SignupSender, SignupService, SignupTemplateConfig, Validator } from 'signup-service';
 import { createValidator } from 'xvalidators';
-import { AppreciationController, useAppreciationController } from './appreciation';
+import { AppreciationController, AppreciationReplyController, useAppreciationController, useAppreciationReplyController } from './appreciation';
 import { ArticleController, useArticleController } from './article';
 import { LocationController, LocationRateController, useLocationController, useLocationRateController } from './location';
 import { ArticleController as MyArticleController, useMyArticleController } from './my-articles';
@@ -43,6 +44,7 @@ export interface Config {
   bucket: string;
   storage: StorageConf;
   model: ModelConf;
+  modelAppreciation: ModelConfig;
 }
 export interface ApplicationContext {
   health: HealthController;
@@ -61,6 +63,7 @@ export interface ApplicationContext {
   rate: LocationRateController;
   article: ArticleController;
   myarticles: MyArticleController;
+  appreciationReply:AppreciationReplyController;
 }
 
 export function useContext(
@@ -179,6 +182,7 @@ export function useContext(
     conf.password.max,
     undefined
   );
+  const build = useBuild(conf.modelAppreciation, generate);
   const password = new PasswordController(logger.error, passwordService);
 
   const user = useUserController(logger.error, db);
@@ -190,7 +194,8 @@ export function useContext(
   const lookingForService = new StringService('searchs', 'item', queryDB.query, queryDB.exec);
   const lookingFor = new QueryController<string[]>(logger.error, interestService.load, 'keyword');
 
-  const appreciation = useAppreciationController(logger.error, mainDB);
+  const appreciation = useAppreciationController(logger.error, mainDB,generate,undefined,build);
+  const appreciationReply = useAppreciationReplyController(logger.error, mainDB,undefined,build);
 
   const storageConfig: StorageConfig = { bucket: conf.bucket, public: true };
   const storage = new Storage();
@@ -205,9 +210,11 @@ export function useContext(
   const article = useArticleController(logger.error, locationDB);
   const myarticles = useMyArticleController(logger.error, locationDB);
 
-  return { health, log, middleware, authentication, signup, password,
+  return {
+    health, log, middleware, authentication, signup, password,
     myprofile, user, skill, interest, lookingFor, appreciation,
-    location, rate, article, myarticles };
+    location, rate, article, myarticles,appreciationReply
+  };
 }
 export function generate(): string {
   return shortid.generate();
