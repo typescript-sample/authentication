@@ -194,7 +194,7 @@ export function useContext(
   const lookingForService = new StringService('searchs', 'item', queryDB.query, queryDB.exec);
   const lookingFor = new QueryController<string[]>(logger.error, interestService.load, 'keyword');
 
-  const appreciation = useAppreciationController(logger.error, mainDB,generate,undefined,build);
+  const appreciation = useAppreciationController(logger.error, mainDB,undefined,build);
   const appreciationReply = useAppreciationReplyController(logger.error, mainDB,undefined,build);
 
   const storageConfig: StorageConfig = { bucket: conf.bucket, public: true };

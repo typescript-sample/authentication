@@ -17,15 +17,15 @@ export class AppreciationManager extends Manager<Appreciation, string, Appreciat
     this.usefulAppreciation = this.usefulAppreciation.bind(this)
     this.searchWithReply = this.searchWithReply.bind(this)
   }
-  async usefulAppreciation(obj: UsefulAppreciation, generate: () => string): Promise<number> {
+  async usefulAppreciation(obj: UsefulAppreciation): Promise<number> {
     const data = await this.searchUseful(obj)
     let isInsert = false
     if (data.list.length > 0) {
-      const rs = await this.useful.delete(data.list[0].id)
-      if (rs < 1)
+      const rs = await this.useful.deleteUseful(data.list[0].appreciationId, data.list[0].userId)
+      if (!rs)
         return 0
     } else {
-      const newUseful = { ...obj, id: generate() }
+      const newUseful = { ...obj }
       const rs = await this.useful.insert(newUseful)
       if (rs < 1)
         return rs
@@ -81,20 +81,20 @@ export class AppreciationReplyManager extends Manager<AppreciationReply, string,
     const data = await this.searchUseful(obj)
     let isInsert = false
     if (data.list.length > 0) {
-      const rs = await this.useful.delete(data.list[0].id)
-      if (rs < 1)
+      const rs = await this.useful.deleteUseful(data.list[0].appreciationId, data.list[0].userId)
+      if (!rs)
         return 0
     } else {
-      const newUseful = { ...obj, id: Date.now().toString() }
+      const newUseful = { ...obj }
       const rs = await this.useful.insert(newUseful)
       if (rs < 1)
         return rs
       isInsert = true;
     }
-    const appreciation = await this.repository.load(obj.appreciationId)
+    const appreciation = await this.repositoryReply.load(obj.appreciationId)
     if (appreciation) {
       isInsert ? appreciation.usefulCount += 1 : appreciation.usefulCount -= 1;
-      const rs = await this.repository.update(appreciation);
+      const rs = await this.repositoryReply.update(appreciation);
       if (rs === 1) {
         return isInsert ? 1 : 2;///1:insert
       }
@@ -111,7 +111,7 @@ export class AppreciationReplyManager extends Manager<AppreciationReply, string,
   async searchWithReply(s: AppreciationFilter, userId?: string, limit?: number, offset?: string | number, fields?: string[]): Promise<SearchResult<Appreciation>> {
     const data = await this.searchAppreciation(s, limit, offset, fields)
     if (data.list.length == 0 || !userId) return data;
-    let listAppreciation: Appreciation[] = data.list;
+    let listAppreciation: AppreciationReply[] = data.list;
     for (const appreciation of listAppreciation) {
       const filter: UsefulAppreciationFilter = {
         appreciationId: appreciation.id,
@@ -136,8 +136,8 @@ export function useAppreciationReplyService(db: DB, mapper?: TemplateMap): Appre
   return new AppreciationReplyManager(builder.search, repositoryReply, repository, useful, builderUseful.search);
 }
 //
-export function useAppreciationController(log: Log, db: DB, generate: () => string, mapper?: TemplateMap, build?: Build<Appreciation>): AppreciationController {
-  return new AppreciationController(log, useAppreciationService(db, mapper), generate, build);
+export function useAppreciationController(log: Log, db: DB, mapper?: TemplateMap, build?: Build<Appreciation>): AppreciationController {
+  return new AppreciationController(log, useAppreciationService(db, mapper), build);
 }
 
 export function useAppreciationReplyController(log: Log, db: DB, mapper?: TemplateMap, build?: Build<AppreciationReply>): AppreciationReplyController {

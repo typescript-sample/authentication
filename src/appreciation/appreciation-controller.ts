@@ -4,10 +4,10 @@ import { Request, Response } from 'express';
 import { ParamsDictionary } from 'express-serve-static-core';
 import { ParsedQs } from 'qs';
 export class AppreciationController extends Controller<Appreciation, string, AppreciationFilter> {
-  constructor(log: Log, public userService: AppreciationService, private generate: () => string, build?: Build<Appreciation>) {
+  constructor(log: Log, public userService: AppreciationService, build?: Build<Appreciation>) {
     super(log, userService, undefined, build);
     this.usefulAppreciation = this.usefulAppreciation.bind(this)
-    this.search=this.search.bind(this)
+    this.search = this.search.bind(this)
   }
 
   usefulAppreciation(req: Request, res: Response) {
@@ -17,7 +17,7 @@ export class AppreciationController extends Controller<Appreciation, string, App
       const useful: UsefulAppreciationFilter = {
         appreciationId, userId
       }
-      return this.userService.usefulAppreciation(useful, this.generate).then(
+      return this.userService.usefulAppreciation(useful).then(
         rs => {
           if (rs > 0) {
             res.status(200).json(rs).end()
@@ -34,7 +34,7 @@ export class AppreciationController extends Controller<Appreciation, string, App
   search(req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>, res: Response<any, Record<string, any>>): void {
     const s = fromRequest<AppreciationFilter>(req, buildArray(this.array, this.fields, this.excluding));
     const l = getParameters(s, this.config);
-    const s2 = format(s, this.dates, this.numbers); 
+    const s2 = format(s, this.dates, this.numbers);
     this.userService.searchWithReply(s2, req.query.userIdUseful?.toString(), l.limit, l.skipOrRefId, l.fields)
       .then(result => jsonResult(res, result, this.csv, l.fields, this.config))
       .catch(err => handleError(err, res, this.log));
@@ -46,6 +46,7 @@ export class AppreciationReplyController extends Controller<AppreciationReply, s
     super(log, serviceAppreciation, undefined, build);
     this.create = this.create.bind(this);
     this.usefulAppreciation = this.usefulAppreciation.bind(this)
+    this.search = this.search.bind(this)
   }
 
   usefulAppreciation(req: Request, res: Response) {
@@ -67,5 +68,13 @@ export class AppreciationReplyController extends Controller<AppreciationReply, s
     } else {
       return res.status(400).end('data cannot be empty');
     }
+  }
+  search(req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>, res: Response<any, Record<string, any>>): void {
+    const s = fromRequest<AppreciationReplyFilter>(req, buildArray(this.array, this.fields, this.excluding));
+    const l = getParameters(s, this.config);
+    const s2 = format(s, this.dates, this.numbers);
+    this.serviceAppreciation.searchWithReply(s2, req.query.userIdUseful?.toString(), l.limit, l.skipOrRefId, l.fields)
+      .then(result => jsonResult(res, result, this.csv, l.fields, this.config))
+      .catch(err => handleError(err, res, this.log));
   }
 }
