@@ -1,4 +1,4 @@
-import { DB, Repository } from 'query-core';
+import { DB, Repository, Statement } from 'query-core';
 import { AppreciationReply, AppreciationReplyModel, AppreciationReplyRepository } from './appreciation';
 
 export class SqlAppreciationReplyRepository extends Repository<AppreciationReply, string> implements AppreciationReplyRepository {
@@ -17,5 +17,17 @@ export class SqlAppreciationReplyRepository extends Repository<AppreciationReply
       return false
     }
   }
+  async delete(id: string, ctx?: any): Promise<number> {
+    try {
+      const stmts: Statement[] = [];
+      const queryDeleteAppreciationReplyUseful = `delete from usefulappreciation where appreciationid = $1`;
+      const queryDeleteAppreciationReply = `delete from appreciationreply where id = $1`
+      stmts.push({ query: queryDeleteAppreciationReplyUseful, params: [id] })
+      stmts.push({ query: queryDeleteAppreciationReply, params: [id] })
+      const rs = await this.execBatch(stmts, false)
+      return rs
+    } catch (error) {
+      return 0
+    }
+  }
 }
-``
