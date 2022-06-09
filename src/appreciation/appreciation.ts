@@ -23,7 +23,7 @@ export interface Appreciation {
   isUseful?: boolean
 }
 export interface AppreciationRepository extends Repository<Appreciation, string> {
-  increaseReply(id: string): Promise<boolean>;
+  increaseReply(id: string,count:number): Promise<boolean>;
 }
 export interface AppreciationService extends Service<Appreciation, string, AppreciationFilter> {
   usefulAppreciation(obj: UsefulAppreciationFilter): Promise<number>;

@@ -17,6 +17,7 @@ export class AppreciationManager extends Manager<Appreciation, string, Appreciat
     this.usefulAppreciation = this.usefulAppreciation.bind(this)
     this.searchWithReply = this.searchWithReply.bind(this)
   }
+
   async usefulAppreciation(obj: UsefulAppreciation): Promise<number> {
     const data = await this.searchUseful(obj)
     let isInsert = false
@@ -70,8 +71,8 @@ export function useAppreciationService(db: DB, mapper?: TemplateMap): Appreciati
 
 
 //
-export class AppreciationReplyManager extends Manager<AppreciationReply, string, AppreciationFilter> implements AppreciationReplyService {
-  constructor(public searchAppreciation: Search<AppreciationReply, AppreciationReplyFilter>, public repositoryReply: AppreciationReplyRepository, public repository: AppreciationRepository, public useful: UsefulAppreciationRepository, public searchUseful: Search<UsefulAppreciation, UsefulAppreciationFilter>) {
+export class AppreciationReplyManager extends Manager<AppreciationReply, string, AppreciationReplyFilter> implements AppreciationReplyService {
+  constructor(public searchAppreciation: Search<AppreciationReply, AppreciationReplyFilter>, public repositoryReply: AppreciationReplyRepository, public repositoryAppreciation: AppreciationRepository, public useful: UsefulAppreciationRepository, public searchUseful: Search<UsefulAppreciation, UsefulAppreciationFilter>) {
     super(searchAppreciation, repositoryReply);
     this.usefulAppreciation = this.usefulAppreciation.bind(this)
     this.searchWithReply = this.searchWithReply.bind(this)
@@ -104,7 +105,7 @@ export class AppreciationReplyManager extends Manager<AppreciationReply, string,
 
   override async insert(obj: AppreciationReply, ctx?: any): Promise<number> {
     await this.repositoryReply.insert(obj)
-    const rs = await this.repository.increaseReply(obj.appreciationId || '')
+    const rs = await this.repositoryAppreciation.increaseReply(obj.appreciationId || '', 1)
     return rs ? 1 : 0;
   }
 
@@ -123,6 +124,14 @@ export class AppreciationReplyManager extends Manager<AppreciationReply, string,
     }
     data.list = listAppreciation
     return data;
+  }
+
+  override async delete(id: string, ctx?: any): Promise<number> {
+    const appreciationReply = await this.repositoryReply.load(id)
+    if (!appreciationReply) return 0;
+    await this.repositoryReply.delete(id);
+    const rs = await this.repositoryAppreciation.increaseReply(appreciationReply.appreciationId || '', -1)
+    return rs ? 1 : 0; 
   }
 }
 export function useAppreciationReplyService(db: DB, mapper?: TemplateMap): AppreciationReplyService {
