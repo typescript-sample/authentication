@@ -81,4 +81,12 @@ export function route(app: Application, ctx: ApplicationContext): void {
   app.patch('/my-articles/:id', ctx.myarticles.patch);
   app.delete('/my-articles/:id', ctx.myarticles.delete);
   app.delete('/my-articles/userId', ctx.myarticles.delete);
+
+  app.post('/items/search', ctx.item.search);
+  app.get('/items/search', ctx.item.search);
+  app.get('/items/:id', ctx.item.load);
+  app.post('/items', ctx.item.create);
+  app.put('/items/:id', ctx.item.update);
+  app.patch('/items/:id', ctx.item.patch);
+  app.delete('/items/:id', ctx.item.delete);
 }

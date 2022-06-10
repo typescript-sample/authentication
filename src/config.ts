@@ -1,8 +1,9 @@
 export const config = {
   port: 8082,
   secure: false,
+  template: true,
   allow: {
-    origin: 'http://localhost:3000',
+    origin: 'http://localhost:3000', 
     credentials: 'true',
     methods: 'GET,PUT,POST,DELETE,OPTIONS,PATCH',
     headers: 'Access-Control-Allow-Headers, Authorization, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers'
@@ -36,6 +37,13 @@ export const config = {
       host: 'localhost',
       password: 'abcd1234',
       database: 'masterdata',
+      port: 5432
+    },
+    query_items: {
+      user: 'postgres',
+      host: 'localhost',
+      password: '123456',
+      database: 'masterdata2',
       port: 5432
     },
     appreciation: {

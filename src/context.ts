@@ -31,6 +31,8 @@ import { ArticleController as MyArticleController, useMyArticleController } from
 
 import { MyProfileController, useMyProfileController, UserSettings } from './my-profile';
 import { UserController, useUserController } from './user';
+import { ItemController, useItemController } from './my-items';
+import { Mapper, TemplateMap } from 'query-mappers';
 resources.createValidator = createValidator;
 
 export interface Config {
@@ -64,6 +66,7 @@ export interface ApplicationContext {
   article: ArticleController;
   myarticles: MyArticleController;
   appreciationReply:AppreciationReplyController;
+  item: ItemController;
 }
 
 export function useContext(
@@ -74,6 +77,7 @@ export function useContext(
   conf: Config,
   mainDB: DB,
   locationDB: Db,
+  mapper?: TemplateMap,
 ): ApplicationContext {
   const log = new LogController(logger);
   const middleware = new MiddlewareController(midLogger);
@@ -81,6 +85,8 @@ export function useContext(
   const health = new HealthController([mongoChecker]);
   const sendMail = useSend(conf.mail);
   const comparator = new Comparator();
+
+  
 
   // const encrypter = new RC4Encrypter(conf.secret);
   const auth = conf.auth;
@@ -186,6 +192,7 @@ export function useContext(
   const password = new PasswordController(logger.error, passwordService);
 
   const user = useUserController(logger.error, db);
+  const item = useItemController(logger.error, queryDB);
 
   const skillService = new StringService('skills', 'skill', queryDB.query, queryDB.exec);
   const skill = new QueryController<string[]>(logger.error, skillService.load, 'keyword');
@@ -213,9 +220,10 @@ export function useContext(
   return {
     health, log, middleware, authentication, signup, password,
     myprofile, user, skill, interest, lookingFor, appreciation,
-    location, rate, article, myarticles,appreciationReply
+    location, rate, article, myarticles,appreciationReply, item
   };
 }
+
 export function generate(): string {
   return shortid.generate();
 }

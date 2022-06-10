@@ -1,3 +1,5 @@
+
+import { query } from 'express';
 import { Log, Manager, Search } from 'onecore';
 import { DB, postgres, SearchBuilder } from 'query-core';
 import { TemplateMap, useQuery } from 'query-mappers';
@@ -13,6 +15,16 @@ export class ItemManager extends Manager<Item, string, ItemFilter> implements It
       super(search, repository);
     }
 }
+
+
+// export function useItemController(log: Log, db: DB): ItemController {
+//   const builder = new SearchBuilder<Item, ItemFilter>(db.query, 'items', ItemModel, postgres);
+//   const repository = new SqlItemRepository(db);
+//   return new ItemController(log, builder.search, repository);
+// }
+
+
+
   export function useItemService(db: DB, mapper?: TemplateMap): ItemService {
     const query = useQuery('item', mapper, ItemModel, true);
     const builder = new SearchBuilder<Item, ItemFilter>(db.query, 'items', ItemModel, postgres, query);
