@@ -49,7 +49,7 @@ export function route(app: Application, ctx: ApplicationContext): void {
   app.patch('/appreciation/:id', ctx.appreciation.patch);
   app.delete('/appreciation/:id', ctx.appreciation.delete);
   app.post('/appreciation/useful', ctx.appreciation.usefulAppreciation);
-  ///appreciation reply
+  // appreciation reply
   app.get('/appreciation-reply', ctx.appreciationReply.search);
   app.post('/appreciation-reply/search', ctx.appreciationReply.search);
   app.get('/appreciation-reply/search', ctx.appreciationReply.search);

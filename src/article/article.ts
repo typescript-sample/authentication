@@ -5,7 +5,7 @@ export interface ArticleFilter extends Filter {
   title?: string;
   type?: string;
   tags?: string[];
-  status?: string[]|string;
+  status?: string[] | string;
 }
 export interface Article {
   id?: string;

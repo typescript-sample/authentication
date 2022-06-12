@@ -44,7 +44,7 @@ export class MyProfileController extends UploadController {
     }
   }
   saveMyProfile(req: Request, res: Response) {
-    const user: User = req.body; 
+    const user: User = req.body;
     const id = req.params['id'];
     if (!id || id.length === 0) {
       res.status(400).end('id cannot be empty');

@@ -1,5 +1,3 @@
-
-import { query } from 'express';
 import { Log, Manager, Search } from 'onecore';
 import { DB, postgres, SearchBuilder } from 'query-core';
 import { TemplateMap, useQuery } from 'query-mappers';
@@ -11,26 +9,17 @@ export { ItemController };
 import { SqlItemRepository } from './sql-item-repository';
 
 export class ItemManager extends Manager<Item, string, ItemFilter> implements ItemService {
-    constructor(search: Search<Item, ItemFilter>, repository: ItemRepository) {
-      super(search, repository);
-    }
+  constructor(search: Search<Item, ItemFilter>, repository: ItemRepository) {
+    super(search, repository);
+  }
 }
 
-
-// export function useItemController(log: Log, db: DB): ItemController {
-//   const builder = new SearchBuilder<Item, ItemFilter>(db.query, 'items', ItemModel, postgres);
-//   const repository = new SqlItemRepository(db);
-//   return new ItemController(log, builder.search, repository);
-// }
-
-
-
-  export function useItemService(db: DB, mapper?: TemplateMap): ItemService {
-    const query = useQuery('item', mapper, ItemModel, true);
-    const builder = new SearchBuilder<Item, ItemFilter>(db.query, 'items', ItemModel, postgres, query);
-    const repository = new SqlItemRepository(db);
-    return new ItemManager(builder.search, repository);
+export function useItemService(db: DB, mapper?: TemplateMap): ItemService {
+  const queryItems = useQuery('item', mapper, ItemModel, true);
+  const builder = new SearchBuilder<Item, ItemFilter>(db.query, 'items', ItemModel, postgres, queryItems);
+  const repository = new SqlItemRepository(db);
+  return new ItemManager(builder.search, repository);
 }
-  export function useItemController(log: Log, db: DB, mapper?: TemplateMap): ItemController {
-    return new ItemController(log, useItemService(db, mapper));
+export function useItemController(log: Log, db: DB, mapper?: TemplateMap): ItemController {
+  return new ItemController(log, useItemService(db, mapper));
 }

@@ -35,7 +35,7 @@ export class LocationManager extends ViewManager<Location, string> implements Lo
   }
   async rate(rate: Rate): Promise<boolean> {
     const info = await this.infoRepository.load(rate.locationId);
-    if (!info || typeof info[('rate' + rate.rate.toString()) as keyof LocationInfo ] === 'undefined') {
+    if (!info || typeof info[('rate' + rate.rate.toString()) as keyof LocationInfo] === 'undefined') {
       return false;
     }
     if (rate.id) {
@@ -65,7 +65,7 @@ export class LocationManager extends ViewManager<Location, string> implements Lo
   }
 }
 
-export class RateManagaer extends ViewManager<Rate, string>implements RateService {
+export class RateManagaer extends ViewManager<Rate, string> implements RateService {
   constructor(private repository: RateRepository) {
     super(repository);
   }

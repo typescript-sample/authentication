@@ -5,8 +5,8 @@ export interface ArticleFilter extends Filter {
   title?: string;
   type?: string;
   tags?: string[];
-  status?: string[]|string;
-  authorId?:string;
+  status?: string[] | string;
+  authorId?: string;
 }
 export interface Article {
   id?: string;
@@ -16,7 +16,7 @@ export interface Article {
   content?: string;
   tags?: string[];
   status?: string;
-  authorId?:string;
+  authorId?: string;
 }
 export interface ArticleRepository extends Repository<Article, string> {
 }
