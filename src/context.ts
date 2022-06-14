@@ -192,7 +192,7 @@ export function useContext(
   const password = new PasswordController(logger.error, passwordService);
 
   const user = useUserController(logger.error, db);
-  const item = useItemController(logger.error, queryDB);
+  const item = useItemController(logger.error, queryDB, mapper);
 
   const skillService = new StringService('skills', 'skill', queryDB.query, queryDB.exec);
   const skill = new QueryController<string[]>(logger.error, skillService.load, 'keyword');
