@@ -13,6 +13,7 @@ import { buildTemplates, trim } from 'query-mappers';
 import { config, env } from './config';
 import { useContext} from './context';
 import { route } from './route';
+
 dotenv.config();
 const conf = merge(config, process.env, env, process.env.ENV);
 
@@ -24,7 +25,7 @@ app.use(allow(conf.allow), json(), cookieParser(), middleware.log);
 const templates = loadTemplates(conf.template, buildTemplates, trim, ['./configs/query.xml']);
 const pool = new Pool(conf.db.query_items);
 const queryDB = new PoolManager(pool);
-const db = log(new PoolManager(new Pool(conf.db.query_items)), true, logger, 'sql');
+const db = log(new PoolManager(new Pool(conf.db.query_items)), true, logger, 'postgres');
 connectToDb(`${conf.db.authentication.uri}`, `${conf.db.authentication.db}`).then(mongodb => {
   connectToDb(`${conf.db.location.uri}`, `${conf.db.location.db}`).then(locationDB => {
     const ctx = useContext(mongodb, queryDB, logger, middleware, conf, db, locationDB, templates);
@@ -34,3 +35,4 @@ connectToDb(`${conf.db.authentication.uri}`, `${conf.db.authentication.db}`).the
     });
   });
 });
+

@@ -215,7 +215,7 @@ export function useContext(
   const location = useLocationController(logger.error, locationDB);
   const rate = useLocationRateController(logger.error, locationDB);
   const article = useArticleController(logger.error, locationDB);
-  const myarticles = useMyArticleController(logger.error, locationDB);
+  const myarticles = useMyArticleController(logger.error, queryDB, mapper);
 
   return {
     health, log, middleware, authentication, signup, password,

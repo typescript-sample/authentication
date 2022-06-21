@@ -63,4 +63,38 @@
       order by {sort}
     </if>
   </select>
+
+  <select id="article">
+    select * 
+    from articles
+    where
+    <if test="id != null">
+      id in (#{id}) and
+    </if>
+    <if test="title != null">
+      title in #{title} and
+    </if>
+    <if test="type != null">
+      status in #{status} and
+    </if>
+    <if test="description != null">
+      description in #{description}
+    </if>
+    <if test="content != null">
+      content in #{content}
+    </if>
+    <if test="tags != null">
+      tags in #{tags}
+    </if>
+    <if test="status != null">
+      status in #{status}
+    </if>
+    <if test="authorId != null">
+      authorId in #{authorId}
+    </if>
+    1 = 1
+    <if test="sort != null">
+      order by {sort}
+    </if>
+  </select>
 </mapper>
