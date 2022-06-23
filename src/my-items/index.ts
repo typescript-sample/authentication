@@ -3,6 +3,7 @@ import { DB, postgres, SearchBuilder } from 'query-core';
 import { TemplateMap, useQuery } from 'query-mappers';
 import { Item, ItemFilter, ItemModel, ItemRepository, ItemService } from './item';
 import { ItemController } from './item-controller';
+import {buildQuery} from './query';
 export * from './item';
 export { ItemController };
 

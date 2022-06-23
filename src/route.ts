@@ -89,4 +89,12 @@ export function route(app: Application, ctx: ApplicationContext): void {
   app.put('/items/:id', ctx.item.update);
   app.patch('/items/:id', ctx.item.patch);
   app.delete('/items/:id', ctx.item.delete);
+
+  app.post('/my-items/search', ctx.item.search);
+  app.get('/my-items/search', ctx.item.search);
+  app.get('/my-items/:id', ctx.item.load);
+  app.post('/my-items', ctx.item.create);
+  app.put('/my-items/:id', ctx.item.update);
+  app.patch('/my-items/:id', ctx.item.patch);
+  app.delete('/my-items/:id', ctx.item.delete);
 }

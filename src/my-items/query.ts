@@ -22,12 +22,18 @@ export function buildQuery(s: ItemFilter):  Statement {
         where.push(`discription ilike $${i++}`);
         params.push('%' + s.discription + '%');
     }
+    if (s.q && s.q.length > 0) {
+        where.push(`(title ilike $${i++} or description ilike $${i++}) `);
+        params.push('%' + s.q + '%');
+        params.push('%' + s.q + '%');
+    }
     if (where.length > 0) {
         query = query + `where` + where.join('and');
     }
     if (s.limit && s.limit > 0) {
         query = query + ` limit ${s.limit}`;
     }
+
     console.log(query);
     return {query, params};
 }
