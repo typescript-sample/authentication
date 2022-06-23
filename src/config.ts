@@ -3,122 +3,123 @@ export const config = {
   secure: false,
   template: true,
   allow: {
-    origin: 'http://localhost:3000',
-    credentials: 'true',
-    methods: 'GET,PUT,POST,DELETE,OPTIONS,PATCH',
-    headers: 'Access-Control-Allow-Headers, Authorization, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers'
+    origin: "http://localhost:3000",
+    credentials: "true",
+    methods: "GET,PUT,POST,DELETE,OPTIONS,PATCH",
+    headers:
+      "Access-Control-Allow-Headers, Authorization, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers",
   },
   log: {
-    level: 'debug',
+    level: "debug",
     map: {
-      time: '@timestamp',
-      msg: 'message'
+      time: "@timestamp",
+      msg: "message",
     },
-    db: true
+    db: true,
   },
   middleware: {
     log: true,
-    skips: 'health,log,authenticate',
-    request: 'request',
-    status: 'status',
-    size: 'size'
+    skips: "health,log,authenticate",
+    request: "request",
+    status: "status",
+    size: "size",
   },
   db: {
     authentication: {
-      uri: 'mongodb+srv://dbUser:Demoaccount1@projectdemo.g0lah.mongodb.net',
-      db: 'user'
+      uri: "mongodb+srv://dbUser:Demoaccount1@projectdemo.g0lah.mongodb.net",
+      db: "user",
     },
     location: {
-      uri: 'mongodb+srv://dbUser:Demoaccount1@projectdemo.g0lah.mongodb.net',
-      db: 'location'
+      uri: "mongodb+srv://dbUser:Demoaccount1@projectdemo.g0lah.mongodb.net",
+      db: "location",
     },
     query: {
-      user: 'postgres',
-      host: 'localhost',
-      password: 'abcd1234',
-      database: 'masterdata',
-      port: 5432
+      user: "postgres",
+      host: "localhost",
+      password: "abcd1234",
+      database: "masterdata",
+      port: 5432,
     },
-    query_items: {
-      user: 'postgres',
-      host: 'localhost',
-      password: '123456',
-      database: 'masterdata2',
-      port: 5432
+    nothingtosay: {
+      user: "postgres",
+      host: "localhost",
+      password: "Nothingtosay123!",
+      database: "nothingtosay",
+      port: 5432,
     },
     appreciation: {
-      user: 'postgres',
-      host: 'localhost',
-      password: '12345',
-      database: 'user',
-      port: 5432
-    }
+      user: "postgres",
+      host: "localhost",
+      password: "12345",
+      database: "user",
+      port: 5432,
+    },
   },
-  secret: 'secret',
+  secret: "secret",
   auth: {
     token: {
-      secret: 'secretbackoffice',
-      expires: 86400000
+      secret: "secretbackoffice",
+      expires: 86400000,
     },
     status: {
-      success: 1
+      success: 1,
     },
     lockedMinutes: 1,
     maxPasswordFailed: 3,
     payload: {
-      id: 'id',
-      username: 'username',
-      email: 'email',
-      userType: 'userType'
+      id: "id",
+      username: "username",
+      email: "email",
+      userType: "userType",
     },
     account: {
-      displayName: 'displayname'
+      displayName: "displayname",
     },
     userStatus: {
-      activated: 'A',
-      deactivated: 'D'
+      activated: "A",
+      deactivated: "D",
     },
     db: {
-      user: 'user',
-      password: 'authentication',
-      username: 'username',
-      status: 'status',
-      successTime: 'successTime',
-      failTime: 'failTime',
-      failCount: 'failCount',
-      lockedUntilTime: 'lockedUntilTime'
+      user: "user",
+      password: "authentication",
+      username: "username",
+      status: "status",
+      successTime: "successTime",
+      failTime: "failTime",
+      failCount: "failCount",
+      lockedUntilTime: "lockedUntilTime",
     },
     expires: 500,
     template: {
-      subject: 'Verification Code',
-      body: '%s Use this code for verification. This code will expire in %s minutes'
-    }
+      subject: "Verification Code",
+      body: "%s Use this code for verification. This code will expire in %s minutes",
+    },
   },
   signup: {
     expires: 500,
     userStatus: {
-      registered: 'R',
-      codeSent: 'V',
-      activated: 'A'
+      registered: "R",
+      codeSent: "V",
+      activated: "A",
     },
     maxPasswordAge: 90,
     fields: {
-      maxPasswordAge: 'maxPasswordAge'
+      maxPasswordAge: "maxPasswordAge",
     },
     map: {
-      firstName: 'surname',
-      lastName: 'givenName'
+      firstName: "surname",
+      lastName: "givenName",
     },
     track: {
-      createdAt: 'createdAt',
-      createdBy: 'createdBy',
-      updatedAt: 'updatedAt',
-      updatedBy: 'updatedBy',
-      version: 'version'
+      createdAt: "createdAt",
+      createdBy: "createdBy",
+      updatedAt: "updatedAt",
+      updatedBy: "updatedBy",
+      version: "version",
     },
-    url: 'http://localhost:8082/signup/verify',
+    url: "http://localhost:8082/signup/verify",
     template: {
-      subject: 'User registration confirmation',
+      subject: "User registration confirmation",
       body: `
 Please click this link to confirm to activate your account:<br><a href="%s">Confirm Now</a><br><br>
 If the above button doesn't work for you, please click on the below link or copy paste it on to your browser<br>
@@ -128,71 +129,71 @@ Your link will expire after "%s" minutes.
 Hẫy nhấn đường link ở đây để kích hoạt cài khoản của bạn: <br><a href="%s">Xác nhận</a><br><br>
 Nếu đường link đó không hoạt động, hãy sao chép đường link đó và dán vào trình duyệt web của bạn<br>
 <a href="%s">%s</a><br><br>
-Đường link này sẽ hết hạn sau "%s" phút.`
-    }
+Đường link này sẽ hết hạn sau "%s" phút.`,
+    },
   },
   password: {
     max: 3,
     expires: 1500,
     db: {
-      user: 'user',
-      password: 'authentication',
-      history: 'history'
+      user: "user",
+      password: "authentication",
+      history: "history",
     },
     fields: {
-      contact: 'email'
+      contact: "email",
     },
     templates: {
       reset: {
-        subject: 'Passcode to reset password',
+        subject: "Passcode to reset password",
         body: `Your user name is %s. This is the passcode to reset your password: %s. This passcode will expire in %s minutes.<br>
-        Tên đăng nhập của bạn là %s. Hãy dùng mã sau để tạo mật khẩu lại: %s. Mã này sẽ hết hạn trong %s phút.`
+        Tên đăng nhập của bạn là %s. Hãy dùng mã sau để tạo mật khẩu lại: %s. Mã này sẽ hết hạn trong %s phút.`,
       },
       change: {
-        subject: 'Passcode to change password',
+        subject: "Passcode to change password",
         body: `Your user name is %s. This is the passcode to reset your password: %s. This passcode will expire in %s minutes.<br>
-        Tên đăng nhập của bạn là %s. Hãy dùng mã sau để tạo mật khẩu lại: %s. Mã này sẽ hết hạn trong %s phút.`
+        Tên đăng nhập của bạn là %s. Hãy dùng mã sau để tạo mật khẩu lại: %s. Mã này sẽ hết hạn trong %s phút.`,
       },
-    }
+    },
   },
   mail: {
-    provider: 'smtp',
+    provider: "smtp",
     from: {
-      name: ' ',
-      email: ' '
+      name: " ",
+      email: " ",
     },
-    key: ' ',
+    key: " ",
     smtp: {
-      host: 'smtp.gmail.com',
+      host: "smtp.gmail.com",
       port: 465,
       secure: true,
       auth: {
-        user: ' ',
-        pass: ' '
-      }
-    }
+        user: " ",
+        pass: " ",
+      },
+    },
   },
-  bucket: 'go-firestore-rest-api.appspot.com',
+  bucket: "go-firestore-rest-api.appspot.com",
   storage: {
-    image: 'avatar',
-    cover: 'cover',
-    gallery: 'gallery'
+    image: "avatar",
+    cover: "cover",
+    gallery: "gallery",
   },
   model: {
-    id: 'userId'
+    id: "userId",
   },
   modelAppreciation: {
-    id: 'id',
-    payload: 'payload',
-    createdAt: 'createdAt',
-    updatedAt: 'updatedAt',
+    id: "id",
+    payload: "payload",
+    createdAt: "createdAt",
+    updatedAt: "updatedAt",
   },
   settings: {
-    language: 'en-us',
-    dateFormat: 'dd/mm/yyyy',
-    timeFormat: 'hh:mm:ss',
+    language: "en-us",
+    dateFormat: "dd/mm/yyyy",
+    timeFormat: "hh:mm:ss",
     notification: true,
-    dateTimeFormat: 'dd-mm-yyyy:hh:mm',
+    dateTimeFormat: "dd-mm-yyyy:hh:mm",
     emailFeedUpdates: true,
     notifyPostMentions: true,
     emailPostMentions: false,
@@ -203,22 +204,22 @@ Nếu đường link đó không hoạt động, hãy sao chép đường link �
     emailWhenNewEventsAround: false,
     showAroundMeResultsInMemberFeed: true,
     followingListPublicOnMyProfile: true,
-    notifyWhenNewEventsAround: true
-  }
+    notifyWhenNewEventsAround: true,
+  },
 };
 
 export const env = {
   sit: {
     mongo: {
-      db: 'masterdata_sit',
-    }
+      db: "masterdata_sit",
+    },
   },
   prd: {
     log: {
-      level: 'error'
+      level: "error",
     },
     middleware: {
-      log: false
-    }
-  }
+      log: false,
+    },
+  },
 };
