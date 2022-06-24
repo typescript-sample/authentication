@@ -40,6 +40,13 @@ export const config = {
       database: "masterdata",
       port: 5432,
     },
+    query_items: {
+      user: "postgres",
+      host: "localhost",
+      password: "123456",
+      database: "masterdata2",
+      port: 5432,
+    },
     nothingtosay: {
       user: "postgres",
       host: "localhost",

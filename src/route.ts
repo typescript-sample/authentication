@@ -106,29 +106,20 @@ export function route(app: Application, ctx: ApplicationContext): void {
   app.delete("/my-articles/:id", ctx.myarticles.delete);
   app.delete("/my-articles/userId", ctx.myarticles.delete);
 
-<<<<<<< HEAD
-  app.post('/items/search', ctx.item.search);
-  app.get('/items/search', ctx.item.search);
-  app.get('/items/:id', ctx.item.load);
-  app.post('/items', ctx.item.create);
-  app.put('/items/:id', ctx.item.update);
-  app.patch('/items/:id', ctx.item.patch);
-  app.delete('/items/:id', ctx.item.delete);
+  app.post('/items/search', ctx.items.search);
+  app.get('/items/search', ctx.items.search);
+  app.get('/items/:id', ctx.items.load);
 
-  app.post('/my-items/search', ctx.item.search);
-  app.get('/my-items/search', ctx.item.search);
-  app.get('/my-items/:id', ctx.item.load);
-  app.post('/my-items', ctx.item.create);
-  app.put('/my-items/:id', ctx.item.update);
-  app.patch('/my-items/:id', ctx.item.patch);
-  app.delete('/my-items/:id', ctx.item.delete);
-=======
-  app.post("/items/search", ctx.myItems.search);
-  app.get("/items/search", ctx.myItems.search);
-  app.get("/items/:id", ctx.myItems.load);
-  app.post("/items", ctx.myItems.create);
-  app.put("/items/:id", ctx.myItems.update);
-  app.patch("/items/:id", ctx.myItems.patch);
-  app.delete("/items/:id", ctx.myItems.delete);
->>>>>>> 43d9f3467235546012afbf958749d9ad433c0c0a
+  app.post('/item-appreciation/search', ctx.items.search);
+  app.get('/item-appreciation/search', ctx.items.search);
+  app.get('/item-appreciation/:id', ctx.items.load);
+
+  app.post('/my-items/search', ctx.myitems.search);
+  app.get('/my-items/search', ctx.myitems.search);
+  app.get('/my-items/:id', ctx.myitems.load);
+  app.post('/my-items', ctx.myitems.create);
+  app.put('/my-items/:id', ctx.myitems.update);
+  app.patch('/my-items/:id', ctx.myitems.patch);
+  app.delete('/my-items/:id', ctx.myitems.delete);
+
 }

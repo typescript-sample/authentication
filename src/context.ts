@@ -76,7 +76,7 @@ import {
 } from "./my-articles";
 
 import { TemplateMap } from "query-mappers";
-import { ItemController, useItemController } from "./my-items";
+import { MyItemController, useItemController } from "./my-items";
 import {
   MyProfileController,
   useMyProfileController,
@@ -116,7 +116,8 @@ export interface ApplicationContext {
   article: ArticleController;
   myarticles: MyArticleController;
   appreciationReply: AppreciationReplyController;
-  myItems: ItemController;
+  myitems: MyItemController;
+  items: MyItemController;
 }
 
 export function useContext(
@@ -320,6 +321,8 @@ export function useContext(
   const rate = useLocationRateController(logger.error, locationDB);
   const article = useArticleController(logger.error, locationDB);
   const myarticles = useMyArticleController(logger.error, queryDB, mapper);
+  const items = useItemController(logger.error, queryDB);
+  const myitems = useItemController(logger.error, queryDB, mapper);
 
   return {
     health,
@@ -339,7 +342,8 @@ export function useContext(
     article,
     myarticles,
     appreciationReply,
-    myItems: item,
+    myitems,
+    items,
   };
 }
 

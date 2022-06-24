@@ -73,3 +73,18 @@ insert into articles(id, name, type, description, content, tags, status, authorI
 insert into articles(id, name, type, description, content, tags, status, authorId) values ('w2', 'Randy Orton', 'wrestler', 'wwe-superstar', 'wwe chapm', 'team2', 'winner','02');
 insert into articles(id, name, type, description, content, tags, status, authorId) values ('w3', 'Mark Henry', 'wrestler', 'wwe-superstar', 'tagteam chapm', 'team2', 'winner','03');
 insert into articles(id, name, type, description, content, tags, status, authorId) values ('w4', 'Under Taker', 'wrestler', 'wwe-superstar', 'tagteam chapm', 'team2', 'winner','04');
+
+
+
+create table AppreciationItemReply (
+  id varchar(20) not null,
+  authorId varchar(40),
+  itemId varchar(40),
+  title varchar(120),
+  description varchar(120),
+  createdAt  date
+);
+
+insert into AppreciationItemReply(id, authorId, itemId, title, description) values ("01", "01", "w1","good!!!","interest wrestler");
+
+
