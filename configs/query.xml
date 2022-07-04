@@ -103,4 +103,19 @@
       order by {sort}
     </if>
   </select>
+  <select id="comment">
+    select * 
+    from comments 
+    where 
+    <if test="id != null">
+      id = #{id} and 
+    </if>
+    <if test="author != null">
+      author = #{author} and 
+    </if>
+    1 = 1
+    <if test="sort != null">
+      order by {sort}
+    </if>
+  </select>
 </mapper>

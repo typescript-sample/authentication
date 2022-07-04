@@ -88,3 +88,45 @@ create table AppreciationItemReply (
 insert into AppreciationItemReply(id, authorId, itemId, title, description) values ("01", "01", "w1","good!!!","interest wrestler");
 
 
+create table if not exists appreciation (
+  id varchar(40) not null,
+  authorid varchar(40),
+  title varchar(120),
+  description varchar(120),
+  usefulcount integer,
+  replycount integer,
+  createdat date,
+  userid varchar(40),
+  primary key (id)
+);
+
+create table if not exists appreciationreply (
+  id varchar(40) not null,
+  appreciationid varchar(40),
+  title varchar(120),
+  description varchar(120),
+  createdat varchar(120),
+  updateat varchar(120),
+  authorid varchar(40),
+  usefulcount integer,
+  replycount integer,
+  userid varchar(40),
+  primary key (id)
+);
+
+create table if not exists usefulappreciation (
+  id varchar(40) not null,
+  appreciationid varchar(40),
+  userid varchar(40),
+  createdat date,
+  updateat date,
+  primary key (id)
+);
+
+create table if not exists comments(
+  id varchar(255) not null,
+  author varchar(255),
+  comment text,
+  createdat date,
+)
+

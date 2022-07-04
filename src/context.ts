@@ -77,6 +77,7 @@ import {
 
 import { TemplateMap } from "query-mappers";
 import { MyItemController, useItemController } from "./my-items";
+import { CommentController, useCommentController } from "./comment";
 import {
   MyProfileController,
   useMyProfileController,
@@ -118,6 +119,7 @@ export interface ApplicationContext {
   appreciationReply: AppreciationReplyController;
   myitems: MyItemController;
   items: MyItemController;
+  comment: CommentController;
 }
 
 export function useContext(
@@ -323,6 +325,7 @@ export function useContext(
   const myarticles = useMyArticleController(logger.error, queryDB, mapper);
   const items = useItemController(logger.error, queryDB);
   const myitems = useItemController(logger.error, queryDB, mapper);
+  const comment = useCommentController(logger.error, queryDB, mapper);
 
   return {
     health,
@@ -344,6 +347,7 @@ export function useContext(
     appreciationReply,
     myitems,
     items,
+    comment
   };
 }
 

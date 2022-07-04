@@ -122,4 +122,11 @@ export function route(app: Application, ctx: ApplicationContext): void {
   app.patch('/my-items/:id', ctx.myitems.patch);
   app.delete('/my-items/:id', ctx.myitems.delete);
 
+  app.post('/comment/search', ctx.comment.search);
+  app.get('/comment/search', ctx.comment.search);
+  app.get('/comment/:id', ctx.comment.load);
+  app.post('/comment', ctx.comment.create);
+  app.put('/comment/:id', ctx.comment.update);
+  app.patch('/comment/:id', ctx.comment.patch);
+  app.delete('/comment/:id', ctx.comment.delete);
 }
