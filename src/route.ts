@@ -108,8 +108,11 @@ export function route(app: Application, ctx: ApplicationContext): void {
 
   app.post('/items/search', ctx.items.search);
   app.get('/items/search', ctx.items.search);
-  app.post('/items/add', ctx.items.create);
+  app.post('/items/', ctx.items.create);
   app.get('/items/:id', ctx.items.load);
+  app.put('/items/:id', ctx.items.update);
+  app.patch('/items/:id', ctx.items.patch);
+  app.delete('/items/:id', ctx.items.delete);
 
   app.post('/item-appreciation/search', ctx.items.search);
   app.get('/item-appreciation/search', ctx.items.search);
