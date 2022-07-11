@@ -127,6 +127,38 @@ create table if not exists comments(
   id varchar(255) not null,
   author varchar(255),
   comment text,
-  createdat date,
+  createdat date
 )
 
+create table categories(
+  categoryid character varying(40) primary key,
+  categoryname character varying(300) not null,
+  status char(1) not null,
+  createdby character varying(40),
+  createdat timestamp,
+  updatedby character varying(40),
+  updatedat timestamp
+);
+
+INSERT INTO categories (categoryid,categoryname,status) VALUES('adventure','adventure','A');
+INSERT INTO categories (categoryid,categoryname,status) VALUES ('animated','animated','A');
+INSERT INTO categories (categoryid,categoryname,status) VALUES ('comedy','comedy','A');
+INSERT INTO categories (categoryid,categoryname,status) VALUES ('drama','drama','A');
+INSERT INTO categories (categoryid,categoryname,status) VALUES ('horror','horror','A');
+INSERT INTO categories (categoryid,categoryname,status) VALUES ('crime','crime','A');
+INSERT INTO categories (categoryid,categoryname,status) VALUES ('fantasy','fantasy','A');
+INSERT INTO categories (categoryid,categoryname,status) VALUES ('family','family','A');
+
+create table items
+(
+    id character varying(40) primary key,
+    title character varying(120) not null,
+    status char(1) not null,
+    description character varying(120),
+    categories character varying[],
+);
+
+insert into users (id, title, status, description, categories) values ('01', 'vexemphim', 'A', 'vexemphimsieuhay', '{horror,drama}');
+insert into users (id, title, status, description, categories) values ('02', 'phimhay', 'A', 'phimsieuhay', '{horror,crime}');
+
+select * from users where categories && '{"horror"}';

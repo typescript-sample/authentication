@@ -108,6 +108,7 @@ export function route(app: Application, ctx: ApplicationContext): void {
 
   app.post('/items/search', ctx.items.search);
   app.get('/items/search', ctx.items.search);
+  app.post('/items/add', ctx.items.create);
   app.get('/items/:id', ctx.items.load);
 
   app.post('/item-appreciation/search', ctx.items.search);
@@ -129,4 +130,12 @@ export function route(app: Application, ctx: ApplicationContext): void {
   app.put('/comment/:id', ctx.comment.update);
   app.patch('/comment/:id', ctx.comment.patch);
   app.delete('/comment/:id', ctx.comment.delete);
+
+  app.post('/categories/search', ctx.category.search);
+  app.get('/categories/search', ctx.category.search);
+  app.get('/categories/:id', ctx.category.load);
+  app.post('/categories/', ctx.category.create);
+  app.put('/categories/:id', ctx.category.update);
+  app.patch('/categories/:id', ctx.category.patch);
+  app.delete('/categories/:id', ctx.category.delete);
 }

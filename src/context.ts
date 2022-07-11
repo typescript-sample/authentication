@@ -76,7 +76,8 @@ import {
 } from "./my-articles";
 
 import { TemplateMap } from "query-mappers";
-import { MyItemController, useItemController } from "./my-items";
+import { ItemController, useItemController } from "./items";
+import { MyItemController, useItemController as useMyItemController } from "./my-items";
 import { CommentController, useCommentController } from "./comment";
 import {
   MyProfileController,
@@ -84,6 +85,8 @@ import {
   UserSettings,
 } from "./my-profile";
 import { UserController, useUserController } from "./user";
+import { CategoryController, useCategoryController } from './category';
+
 resources.createValidator = createValidator;
 
 export interface Config {
@@ -118,8 +121,9 @@ export interface ApplicationContext {
   myarticles: MyArticleController;
   appreciationReply: AppreciationReplyController;
   myitems: MyItemController;
-  items: MyItemController;
+  items: ItemController;
   comment: CommentController;
+  category: CategoryController;
 }
 
 export function useContext(
@@ -243,7 +247,7 @@ export function useContext(
   const password = new PasswordController(logger.error, passwordService);
 
   const user = useUserController(logger.error, db);
-  const item = useItemController(logger.error, queryDB, mapper);
+
 
   const skillService = new StringService(
     "skills",
@@ -324,9 +328,11 @@ export function useContext(
   const article = useArticleController(logger.error, locationDB);
   const myarticles = useMyArticleController(logger.error, queryDB, mapper);
   const items = useItemController(logger.error, queryDB);
-  const myitems = useItemController(logger.error, queryDB, mapper);
+  // const item = useItemController(logger.error, queryDB, mapper);
+  const myitems = useMyItemController(logger.error, queryDB, mapper);
   const comment = useCommentController(logger.error, queryDB, mapper);
-
+  const category = useCategoryController(logger.error, queryDB);
+  
   return {
     health,
     log,
@@ -347,7 +353,8 @@ export function useContext(
     appreciationReply,
     myitems,
     items,
-    comment
+    comment,
+    category
   };
 }
 
