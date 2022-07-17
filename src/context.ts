@@ -1,12 +1,12 @@
 import { Storage } from '@google-cloud/storage';
 import { AuthenticationController } from 'authen-express';
+import { MongoUserRepository } from 'authen-mongo';
 import {
   Authenticator,
+  AuthTemplateConfig,
   CodeMailSender,
   initializeStatus,
-  SqlAuthTemplateConfig,
   User,
-  useUserRepository,
 } from 'authen-service';
 import { compare } from 'bcrypt';
 import { Comparator } from 'bcrypt-plus';
@@ -34,26 +34,27 @@ import { Db } from 'mongodb';
 import { MongoChecker } from 'mongodb-extension';
 import nodemailer from 'nodemailer';
 import { ModelConf, StorageConf } from 'one-storage';
+
+import { PasscodeRepository } from 'passcode-mongo';
 import { PasswordController } from 'password-express';
+import { usePasswordRepository } from 'password-mongo';
 import {
   MailSender,
   PasswordService,
   PasswordTemplateConfig,
-  usePasswordRepository
 } from 'password-service';
-import { CodeRepository, DB, StringService } from 'pg-extension';
-import { TemplateMap } from 'query-mappers';
+import { DB, StringService } from 'pg-extension';
 import { SendGridMailService } from 'sendgrid-plus';
 import shortid from 'shortid';
 import { SignupController } from 'signup-express';
+import { useRepository } from 'signup-mongo';
 import {
   initStatus,
   Signup,
   SignupSender,
   SignupService,
   SignupTemplateConfig,
-  useRepository,
-  Validator
+  Validator,
 } from 'signup-service';
 import { createValidator } from 'xvalidators';
 import {
@@ -63,9 +64,6 @@ import {
   useAppreciationReplyController,
 } from './appreciation';
 import { ArticleController, useArticleController } from './article';
-import { CategoryController, useCategoryController } from './category';
-import { CommentController, useCommentController } from './comment';
-import { ItemController, useItemController } from './items';
 import {
   LocationController,
   LocationRateController,
@@ -76,6 +74,11 @@ import {
   ArticleController as MyArticleController,
   useMyArticleController,
 } from './my-articles';
+
+import { TemplateMap } from 'query-mappers';
+import { CategoryController, useCategoryController } from './category';
+import { CommentController, useCommentController } from './comment';
+import { ItemController, useItemController } from './items';
 import { MyItemController, useItemController as useMyItemController } from './my-items';
 import {
   MyProfileController,
@@ -89,7 +92,7 @@ resources.createValidator = createValidator;
 export interface Config {
   cookie?: boolean;
   secret: string;
-  auth: SqlAuthTemplateConfig;
+  auth: AuthTemplateConfig;
   signup: SignupTemplateConfig;
   password: PasswordTemplateConfig;
   mail: MailConfig;
@@ -149,10 +152,14 @@ export function useContext(
     conf.auth.template.body,
     conf.auth.template.subject
   );
-  const verifiedCodeRepository = new CodeRepository<string>(mainDB, 'authencodes');
-  const userRepository = useUserRepository<string, SqlAuthTemplateConfig>(
-    queryDB,
-    conf.auth
+  const verifiedCodeRepository = new PasscodeRepository<string>(
+    db.collection('authenCode')
+  );
+  const userRepository = new MongoUserRepository(
+    db,
+    conf.auth.db,
+    auth.userStatus,
+    auth.account
   );
   const authenticator = new Authenticator(
     status,
@@ -164,11 +171,12 @@ export function useContext(
     userRepository,
     undefined,
     auth.lockedMinutes,
-    2,
+    auth.maxPasswordFailed,
     codeMailSender.send,
     conf.auth.expires,
     verifiedCodeRepository,
-    comparator.hash
+    comparator.hash,
+    hasTwoFactors
   );
   const authentication = new AuthenticationController(
     logger.error,
@@ -183,11 +191,13 @@ export function useContext(
     conf.signup.template.body,
     conf.signup.template.subject
   );
-  const passcodeRepository = new CodeRepository<string>(mainDB, 'signupcodes');
+  const passcodeRepository = new PasscodeRepository<string>(
+    db.collection('signupCode')
+  );
   const signupRepository = useRepository<string, Signup>(
-    mainDB,
-    'users',
-    'passwords',
+    db,
+    'user',
+    'authentication',
     conf.signup.userStatus,
     conf.signup.fields,
     conf.signup.maxPasswordAge,
@@ -215,9 +225,11 @@ export function useContext(
     conf.password.templates.reset.body,
     conf.password.templates.reset.subject
   );
-  const codeRepository = new CodeRepository<string>(mainDB, 'passwordcodes');
+  const codeRepository = new PasscodeRepository<string>(
+    db.collection('passwordCode')
+  );
   const passwordRepository = usePasswordRepository<string>(
-    mainDB,
+    db,
     conf.password.db,
     conf.password.max,
     conf.password.fields
@@ -310,6 +322,7 @@ export function useContext(
     undefined,
     conf.model
   );
+
   const location = useLocationController(logger.error, locationDB);
   const rate = useLocationRateController(logger.error, locationDB);
   const article = useArticleController(logger.error, locationDB);
@@ -319,6 +332,7 @@ export function useContext(
   const myitems = useMyItemController(logger.error, queryDB, mapper);
   const comment = useCommentController(logger.error, queryDB, mapper);
   const category = useCategoryController(logger.error, queryDB);
+
   return {
     health,
     log,
