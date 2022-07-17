@@ -20,14 +20,14 @@ export interface Appreciation {
   replyCount: number;
   usefulCount: number;
   createdAt?: Date;
-  isUseful?: boolean
+  isUseful?: boolean;
 }
 export interface AppreciationRepository extends Repository<Appreciation, string> {
-  increaseReply(id: string,count:number): Promise<boolean>;
+  increaseReply(id: string, count: number): Promise<boolean>;
 }
 export interface AppreciationService extends Service<Appreciation, string, AppreciationFilter> {
   usefulAppreciation(obj: UsefulAppreciationFilter): Promise<number>;
-  searchWithReply(s: AppreciationFilter, userId?: string, limit?: number, offset?: string | number, fields?: string[]): Promise<SearchResult<Appreciation>>
+  searchWithReply(s: AppreciationFilter, userId?: string, limit?: number, offset?: string | number, fields?: string[]): Promise<SearchResult<Appreciation>>;
 }
 
 export const AppreciationModel: Attributes = {
@@ -80,7 +80,7 @@ export interface AppreciationReply {
   usefulCount: number;
   createdAt?: Date;
   updatedAt?: Date;
-  isUseful?:boolean
+  isUseful?: boolean;
   appreciationId?: string;
 }
 export interface AppreciationReplyRepository extends Repository<AppreciationReply, string> {
@@ -88,7 +88,7 @@ export interface AppreciationReplyRepository extends Repository<AppreciationRepl
 }
 export interface AppreciationReplyService extends Service<AppreciationReply, string, AppreciationReplyFilter> {
   usefulAppreciation(obj: UsefulAppreciationFilter): Promise<number>;
-  searchWithReply(s: AppreciationReplyFilter, userId?: string, limit?: number, offset?: string | number, fields?: string[]): Promise<SearchResult<AppreciationReply>>
+  searchWithReply(s: AppreciationReplyFilter, userId?: string, limit?: number, offset?: string | number, fields?: string[]): Promise<SearchResult<AppreciationReply>>;
 }
 
 export const AppreciationReplyModel: Attributes = {
@@ -123,9 +123,10 @@ export const AppreciationReplyModel: Attributes = {
     type: 'datetime'
   },
 };
-//////
+
 export interface UsefulAppreciationFilter extends Filter {
   appreciationId: string;
+  itemId?: string;
   userId: string;
   createdAt?: Date;
   updatedAt?: Date;
@@ -137,7 +138,7 @@ export interface UsefulAppreciation {
   updatedAt?: Date;
 }
 export interface UsefulAppreciationRepository extends Repository<UsefulAppreciation, string> {
-  deleteUseful(appreciationId: string, userId: string, ctx?: any): Promise<boolean>
+  deleteUseful(appreciationId: string, userId: string, ctx?: any): Promise<boolean>;
 }
 
 export const UsefulAppreciationModel: Attributes = {

@@ -11,7 +11,7 @@ export function buildQuery(s: ItemFilter): Statement {
     where.push(`id = $${i++}`);
     params.push(s.id);
   }
-  
+
   if (s.title && s.title.length > 0) {
     where.push(`title ilike $${i++}`);
     params.push('%' + s.title + '%');

@@ -4,7 +4,7 @@
   "description": "",
   "main": "app",
   "scripts": {
-    "start": "nodemon --exec npx ts-node-dev src/app",
+    "start": "nodemon --exec ts-node-dev src/app",
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint -c .eslintrc.js --ext .ts src"
   },
@@ -15,7 +15,7 @@
     "@sendgrid/mail": "^7.6.0",
     "authen-express": "^0.0.3",
     "authen-mongo": "^0.0.2",
-    "authen-service": "^0.0.5",
+    "authen-service": "0.0.8",
     "bcrypt": "^5.0.1",
     "bcrypt-plus": "^0.0.1",
     "config-plus": "^0.0.4",
@@ -40,9 +40,9 @@
     "password-client": "^0.1.2",
     "password-express": "^0.0.2",
     "password-mongo": "^0.0.1",
-    "password-service": "^0.0.2",
+    "password-service": "0.0.3",
     "pg": "^8.7.3",
-    "pg-extension": "^0.1.4",
+    "pg-extension": "^0.1.5",
     "query-core": "^0.1.18",
     "query-mappers": "^0.0.3",
     "reflectx": "^0.0.10",
@@ -51,7 +51,7 @@
     "shortid": "^2.2.16",
     "signup-express": "^0.0.1",
     "signup-mongo": "^0.0.1",
-    "signup-service": "^0.0.5",
+    "signup-service": "0.0.7",
     "ts-node": "^10.8.2",
     "upload-express": "^0.1.2",
     "xvalidators": "^0.0.4"

@@ -19,7 +19,7 @@ export interface ItemFilter extends Filter {
 export interface ItemRepository extends Repository<Item, string> {
 }
 
-export interface ItemService extends Service<Item, string, ItemFilter>{
+export interface ItemService extends Service<Item, string, ItemFilter> {
 }
 
 export const ItemModel: Attributes = {
@@ -33,7 +33,7 @@ export const ItemModel: Attributes = {
     q: true
   },
   status: {
-    match: "equal",
+    match: 'equal',
     length: 1
   },
   description: {

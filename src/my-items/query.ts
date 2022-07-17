@@ -1,5 +1,5 @@
-import { Statement } from "query-core";
-import { ItemFilter } from "./item";
+import { Statement } from 'query-core';
+import { ItemFilter } from './item';
 
 export function buildQuery(s: ItemFilter): Statement {
   let query = `select * from items`;
@@ -13,15 +13,15 @@ export function buildQuery(s: ItemFilter): Statement {
   }
   if (s.title && s.title.length > 0) {
     where.push(`title ilike $${i++}`);
-    params.push("%" + s.title + "%");
+    params.push('%' + s.title + '%');
   }
   if (s.status && s.status.length > 0) {
     where.push(`status ilike $${i++}`);
-    params.push("%" + s.status + "%");
+    params.push('%' + s.status + '%');
   }
   if (s.description && s.description.length > 0) {
     where.push(`description ilike $${i++}`);
-    params.push("%" + s.description + "%");
+    params.push('%' + s.description + '%');
   }
   if (s.categories && s.categories.length > 0) {
     params.push(s.categories);
@@ -29,11 +29,11 @@ export function buildQuery(s: ItemFilter): Statement {
   }
   if (s.q && s.q.length > 0) {
     where.push(`(title ilike $${i++} or description ilike $${i++}) `);
-    params.push("%" + s.q + "%");
-    params.push("%" + s.q + "%");
+    params.push('%' + s.q + '%');
+    params.push('%' + s.q + '%');
   }
   if (where.length > 0) {
-    query = query + `where` + where.join("and");
+    query = query + `where` + where.join('and');
   }
   if (s.limit && s.limit > 0) {
     query = query + ` limit ${s.limit}`;

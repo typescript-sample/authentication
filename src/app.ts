@@ -23,7 +23,7 @@ const app = express();
 
 app.use(allow(conf.allow), json(), cookieParser(), middleware.log);
 const templates = loadTemplates(conf.template, buildTemplates, trim, [
-  "./configs/query.xml",
+  './configs/query.xml',
 ]);
 const pool = new Pool(conf.db.query_items);
 const queryDB = new PoolManager(pool);
@@ -47,7 +47,7 @@ connectToDb(
       );
       route(app, ctx);
       http.createServer(app).listen(conf.port, () => {
-        console.log("Start server at port " + conf.port);
+        console.log('Start server at port ' + conf.port);
       });
     }
   );

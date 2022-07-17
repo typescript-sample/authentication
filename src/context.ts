@@ -1,15 +1,15 @@
-import { Storage } from "@google-cloud/storage";
-import { AuthenticationController } from "authen-express";
-import { MongoUserRepository } from "authen-mongo";
+import { Storage } from '@google-cloud/storage';
+import { AuthenticationController } from 'authen-express';
 import {
   Authenticator,
-  AuthTemplateConfig,
   CodeMailSender,
   initializeStatus,
+  SqlAuthTemplateConfig,
   User,
-} from "authen-service";
-import { compare } from "bcrypt";
-import { Comparator } from "bcrypt-plus";
+  useUserRepository,
+} from 'authen-service';
+import { compare } from 'bcrypt';
+import { Comparator } from 'bcrypt-plus';
 import {
   HealthController,
   LogController,
@@ -20,79 +20,76 @@ import {
   QueryController,
   resources,
   useBuild,
-} from "express-ext";
+} from 'express-ext';
 import {
   deleteFile,
   GoogleStorageRepository,
   map,
   StorageConfig,
   useBuildUrl,
-} from "google-storage";
-import { generateToken } from "jsonwebtoken-plus";
-import { MailConfig, MailService, Send } from "mail-core";
-import { Db } from "mongodb";
-import { MongoChecker } from "mongodb-extension";
-import nodemailer from "nodemailer";
-import { ModelConf, StorageConf } from "one-storage";
-
-import { PasscodeRepository } from "passcode-mongo";
-import { PasswordController } from "password-express";
-import { usePasswordRepository } from "password-mongo";
+} from 'google-storage';
+import { generateToken } from 'jsonwebtoken-plus';
+import { MailConfig, MailService, Send } from 'mail-core';
+import { Db } from 'mongodb';
+import { MongoChecker } from 'mongodb-extension';
+import nodemailer from 'nodemailer';
+import { ModelConf, StorageConf } from 'one-storage';
+import { PasswordController } from 'password-express';
 import {
   MailSender,
   PasswordService,
   PasswordTemplateConfig,
-} from "password-service";
-import { DB, StringService } from "pg-extension";
-import { SendGridMailService } from "sendgrid-plus";
-import shortid from "shortid";
-import { SignupController } from "signup-express";
-import { useRepository } from "signup-mongo";
+  usePasswordRepository
+} from 'password-service';
+import { CodeRepository, DB, StringService } from 'pg-extension';
+import { TemplateMap } from 'query-mappers';
+import { SendGridMailService } from 'sendgrid-plus';
+import shortid from 'shortid';
+import { SignupController } from 'signup-express';
 import {
   initStatus,
   Signup,
   SignupSender,
   SignupService,
   SignupTemplateConfig,
-  Validator,
-} from "signup-service";
-import { createValidator } from "xvalidators";
+  useRepository,
+  Validator
+} from 'signup-service';
+import { createValidator } from 'xvalidators';
 import {
   AppreciationController,
   AppreciationReplyController,
   useAppreciationController,
   useAppreciationReplyController,
-} from "./appreciation";
-import { ArticleController, useArticleController } from "./article";
+} from './appreciation';
+import { ArticleController, useArticleController } from './article';
+import { CategoryController, useCategoryController } from './category';
+import { CommentController, useCommentController } from './comment';
+import { ItemController, useItemController } from './items';
 import {
   LocationController,
   LocationRateController,
   useLocationController,
   useLocationRateController,
-} from "./location";
+} from './location';
 import {
   ArticleController as MyArticleController,
   useMyArticleController,
-} from "./my-articles";
-
-import { TemplateMap } from "query-mappers";
-import { ItemController, useItemController } from "./items";
-import { MyItemController, useItemController as useMyItemController } from "./my-items";
-import { CommentController, useCommentController } from "./comment";
+} from './my-articles';
+import { MyItemController, useItemController as useMyItemController } from './my-items';
 import {
   MyProfileController,
   useMyProfileController,
   UserSettings,
-} from "./my-profile";
-import { UserController, useUserController } from "./user";
-import { CategoryController, useCategoryController } from './category';
+} from './my-profile';
+import { UserController, useUserController } from './user';
 
 resources.createValidator = createValidator;
 
 export interface Config {
   cookie?: boolean;
   secret: string;
-  auth: AuthTemplateConfig;
+  auth: SqlAuthTemplateConfig;
   signup: SignupTemplateConfig;
   password: PasswordTemplateConfig;
   mail: MailConfig;
@@ -106,7 +103,7 @@ export interface ApplicationContext {
   health: HealthController;
   log: LogController;
   middleware: MiddlewareController;
-  authentication: AuthenticationController<User>;
+  authentication: AuthenticationController<User, string>;
   signup: SignupController<Signup>;
   password: PasswordController;
   myprofile: MyProfileController;
@@ -152,14 +149,10 @@ export function useContext(
     conf.auth.template.body,
     conf.auth.template.subject
   );
-  const verifiedCodeRepository = new PasscodeRepository<string>(
-    db.collection("authenCode")
-  );
-  const userRepository = new MongoUserRepository(
-    db,
-    conf.auth.db,
-    auth.userStatus,
-    auth.account
+  const verifiedCodeRepository = new CodeRepository<string>(mainDB, 'authencodes');
+  const userRepository = useUserRepository<string, SqlAuthTemplateConfig>(
+    queryDB,
+    conf.auth
   );
   const authenticator = new Authenticator(
     status,
@@ -171,12 +164,11 @@ export function useContext(
     userRepository,
     undefined,
     auth.lockedMinutes,
-    auth.maxPasswordFailed,
+    2,
     codeMailSender.send,
     conf.auth.expires,
     verifiedCodeRepository,
-    comparator.hash,
-    hasTwoFactors
+    comparator.hash
   );
   const authentication = new AuthenticationController(
     logger.error,
@@ -191,13 +183,11 @@ export function useContext(
     conf.signup.template.body,
     conf.signup.template.subject
   );
-  const passcodeRepository = new PasscodeRepository<string>(
-    db.collection("signupCode")
-  );
+  const passcodeRepository = new CodeRepository<string>(mainDB, 'signupcodes');
   const signupRepository = useRepository<string, Signup>(
-    db,
-    "user",
-    "authentication",
+    mainDB,
+    'users',
+    'passwords',
     conf.signup.userStatus,
     conf.signup.fields,
     conf.signup.maxPasswordAge,
@@ -225,11 +215,9 @@ export function useContext(
     conf.password.templates.reset.body,
     conf.password.templates.reset.subject
   );
-  const codeRepository = new PasscodeRepository<string>(
-    db.collection("passwordCode")
-  );
+  const codeRepository = new CodeRepository<string>(mainDB, 'passwordcodes');
   const passwordRepository = usePasswordRepository<string>(
-    db,
+    mainDB,
     conf.password.db,
     conf.password.max,
     conf.password.fields
@@ -250,37 +238,37 @@ export function useContext(
 
 
   const skillService = new StringService(
-    "skills",
-    "skill",
+    'skills',
+    'skill',
     queryDB.query,
     queryDB.exec
   );
   const skill = new QueryController<string[]>(
     logger.error,
     skillService.load,
-    "keyword"
+    'keyword'
   );
   const interestService = new StringService(
-    "interests",
-    "interest",
+    'interests',
+    'interest',
     queryDB.query,
     queryDB.exec
   );
   const interest = new QueryController<string[]>(
     logger.error,
     interestService.load,
-    "keyword"
+    'keyword'
   );
   const lookingForService = new StringService(
-    "searchs",
-    "item",
+    'searchs',
+    'item',
     queryDB.query,
     queryDB.exec
   );
   const lookingFor = new QueryController<string[]>(
     logger.error,
     interestService.load,
-    "keyword"
+    'keyword'
   );
 
   const appreciation = useAppreciationController(
@@ -322,7 +310,6 @@ export function useContext(
     undefined,
     conf.model
   );
-
   const location = useLocationController(logger.error, locationDB);
   const rate = useLocationRateController(logger.error, locationDB);
   const article = useArticleController(logger.error, locationDB);
@@ -332,7 +319,6 @@ export function useContext(
   const myitems = useMyItemController(logger.error, queryDB, mapper);
   const comment = useCommentController(logger.error, queryDB, mapper);
   const category = useCategoryController(logger.error, queryDB);
-  
   return {
     health,
     log,
@@ -365,7 +351,7 @@ export function hasTwoFactors(userId: string): Promise<boolean> {
   return Promise.resolve(false);
 }
 export function useSend(conf: MailConfig): Send {
-  if (conf.provider === "sendgrid") {
+  if (conf.provider === 'sendgrid') {
     return new SendGridMailService(conf.key).send;
   } else {
     const transporter = nodemailer.createTransport(conf.smtp);

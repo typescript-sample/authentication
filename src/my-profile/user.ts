@@ -177,7 +177,7 @@ export const userModel: Attributes = {
     typeof: fileUploadModel,
   },
   uploadGallery: {
-    type: 'primitives',
+    type: 'array',
     typeof: fileUploadModel,
   },
 };
