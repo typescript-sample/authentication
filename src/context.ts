@@ -34,7 +34,6 @@ import { Db } from 'mongodb';
 import { MongoChecker } from 'mongodb-extension';
 import nodemailer from 'nodemailer';
 import { ModelConf, StorageConf } from 'one-storage';
-
 import { PasscodeRepository } from 'passcode-mongo';
 import { PasswordController } from 'password-express';
 import { usePasswordRepository } from 'password-mongo';
@@ -44,6 +43,7 @@ import {
   PasswordTemplateConfig,
 } from 'password-service';
 import { DB, StringService } from 'pg-extension';
+import { TemplateMap } from 'query-mappers';
 import { SendGridMailService } from 'sendgrid-plus';
 import shortid from 'shortid';
 import { SignupController } from 'signup-express';
@@ -64,6 +64,9 @@ import {
   useAppreciationReplyController,
 } from './appreciation';
 import { ArticleController, useArticleController } from './article';
+import { CategoryController, useCategoryController } from './category';
+import { CommentController, useCommentController } from './comment';
+import { ItemController, useItemController } from './items';
 import {
   LocationController,
   LocationRateController,
@@ -74,11 +77,6 @@ import {
   ArticleController as MyArticleController,
   useMyArticleController,
 } from './my-articles';
-
-import { TemplateMap } from 'query-mappers';
-import { CategoryController, useCategoryController } from './category';
-import { CommentController, useCommentController } from './comment';
-import { ItemController, useItemController } from './items';
 import { MyItemController, useItemController as useMyItemController } from './my-items';
 import {
   MyProfileController,

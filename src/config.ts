@@ -94,8 +94,8 @@ export const config = {
       deactivated: 'D',
     },
     db: {
-      user: 'users',
-      password: 'passwords',
+      user: 'user',
+      password: 'authentication',
       id: 'id',
       username: 'username',
       status: 'status',
@@ -104,11 +104,6 @@ export const config = {
       failCount: 'failCount',
       lockedUntilTime: 'lockedUntilTime',
     },
-    query: `
-      select username, email, u.status, p.* from users u
-      inner join passwords p
-        on u.id = p.id
-      where username = $1 and u.status = 'A'`,
     expires: 500,
     template: {
       subject: 'Verification Code',
