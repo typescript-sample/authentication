@@ -123,9 +123,10 @@ export const AppreciationReplyModel: Attributes = {
     type: 'datetime'
   },
 };
-//////
+
 export interface UsefulAppreciationFilter extends Filter {
   appreciationId: string;
+  itemId?: string;
   userId: string;
   createdAt?: Date;
   updatedAt?: Date;

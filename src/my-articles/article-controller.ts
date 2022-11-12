@@ -3,6 +3,6 @@ import { Article, ArticleFilter, ArticleService } from './article';
 
 export class ArticleController extends Controller<Article, string, ArticleFilter> {
   constructor(log: Log, service: ArticleService, build?: Build<Article>) {
-    super(log, service, undefined, build);
+    super(log, service, build);
   }
 }

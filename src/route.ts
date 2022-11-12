@@ -21,16 +21,37 @@ export function route(app: Application, ctx: ApplicationContext): void {
 
   app.get('/my-profile/:id', ctx.myprofile.getMyProfile);
   app.get('/my-profile/:id/settings', ctx.myprofile.getMySettings);
-  app.get('/my-profile/:id/fetchImageGalleryUploaded', ctx.myprofile.getGallery);
+  app.get(
+    '/my-profile/:id/fetchImageGalleryUploaded',
+    ctx.myprofile.getGallery
+  );
   app.patch('/my-profile/:id', ctx.myprofile.saveMyProfile);
   app.patch('/my-profile/:id/settings', ctx.myprofile.saveMySettings);
-  app.post('/my-profile/:id/cover', parser.array('files'), ctx.myprofile.uploadCover);
-  app.post('/my-profile/:id/upload', parser.array('files'), ctx.myprofile.uploadImage);
-  app.post('/my-profile/:id/gallery', parser.single('file'), ctx.myprofile.uploadGallery);
+  app.post(
+    '/my-profile/:id/cover',
+    parser.array('files'),
+    ctx.myprofile.uploadCover
+  );
+  app.post(
+    '/my-profile/:id/upload',
+    parser.array('files'),
+    ctx.myprofile.uploadImage
+  );
+  app.post(
+    '/my-profile/:id/gallery',
+    parser.single('file'),
+    ctx.myprofile.uploadGallery
+  );
   app.patch('/my-profile/:id/gallery', ctx.myprofile.updateGallery);
   app.delete('/my-profile/:id/gallery', ctx.myprofile.deleteGalleryFile);
-  app.post('/my-profile/:id/external-resource', ctx.myprofile.addExternalResource);
-  app.delete('/my-profile/:id/external-resource', ctx.myprofile.deleteExternalResource);
+  app.post(
+    '/my-profile/:id/external-resource',
+    ctx.myprofile.addExternalResource
+  );
+  app.delete(
+    '/my-profile/:id/external-resource',
+    ctx.myprofile.deleteExternalResource
+  );
 
   app.get('/skills', ctx.skill.query);
   app.get('/interests', ctx.interest.query);
@@ -58,7 +79,10 @@ export function route(app: Application, ctx: ApplicationContext): void {
   app.put('/appreciation-reply/:id', ctx.appreciationReply.update);
   app.patch('/appreciation-reply/:id', ctx.appreciationReply.patch);
   app.delete('/appreciation-reply/:id', ctx.appreciationReply.delete);
-  app.post('/appreciation-reply/useful', ctx.appreciationReply.usefulAppreciation);
+  app.post(
+    '/appreciation-reply/useful',
+    ctx.appreciationReply.usefulAppreciation
+  );
 
   app.post('/locations/search', ctx.location.search);
   app.get('/locations/search', ctx.location.search);
@@ -82,11 +106,39 @@ export function route(app: Application, ctx: ApplicationContext): void {
   app.delete('/my-articles/:id', ctx.myarticles.delete);
   app.delete('/my-articles/userId', ctx.myarticles.delete);
 
-  app.post('/items/search', ctx.item.search);
-  app.get('/items/search', ctx.item.search);
-  app.get('/items/:id', ctx.item.load);
-  app.post('/items', ctx.item.create);
-  app.put('/items/:id', ctx.item.update);
-  app.patch('/items/:id', ctx.item.patch);
-  app.delete('/items/:id', ctx.item.delete);
+  app.post('/items/search', ctx.items.search);
+  app.get('/items/search', ctx.items.search);
+  app.post('/items/', ctx.items.create);
+  app.get('/items/:id', ctx.items.load);
+  app.put('/items/:id', ctx.items.update);
+  app.patch('/items/:id', ctx.items.patch);
+  app.delete('/items/:id', ctx.items.delete);
+
+  app.post('/item-appreciation/search', ctx.items.search);
+  app.get('/item-appreciation/search', ctx.items.search);
+  app.get('/item-appreciation/:id', ctx.items.load);
+
+  app.post('/my-items/search', ctx.myitems.search);
+  app.get('/my-items/search', ctx.myitems.search);
+  app.get('/my-items/:id', ctx.myitems.load);
+  app.post('/my-items', ctx.myitems.create);
+  app.put('/my-items/:id', ctx.myitems.update);
+  app.patch('/my-items/:id', ctx.myitems.patch);
+  app.delete('/my-items/:id', ctx.myitems.delete);
+
+  app.post('/comment/search', ctx.comment.search);
+  app.get('/comment/search', ctx.comment.search);
+  app.get('/comment/:id', ctx.comment.load);
+  app.post('/comment', ctx.comment.create);
+  app.put('/comment/:id', ctx.comment.update);
+  app.patch('/comment/:id', ctx.comment.patch);
+  app.delete('/comment/:id', ctx.comment.delete);
+
+  app.post('/categories/search', ctx.category.search);
+  app.get('/categories/search', ctx.category.search);
+  app.get('/categories/:id', ctx.category.load);
+  app.post('/categories/', ctx.category.create);
+  app.put('/categories/:id', ctx.category.update);
+  app.patch('/categories/:id', ctx.category.patch);
+  app.delete('/categories/:id', ctx.category.delete);
 }

@@ -173,11 +173,9 @@ export const userModel: Attributes = {
     typeof: userSettingsModel,
   },
   uploadCover: {
-    type: 'primitives',
-    typeof: fileUploadModel,
   },
   uploadGallery: {
-    type: 'primitives',
+    type: 'array',
     typeof: fileUploadModel,
   },
 };

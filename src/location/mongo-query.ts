@@ -1,7 +1,7 @@
-import { FilterQuery } from 'mongodb';
+import { Filter } from 'mongodb';
 import { Location, LocationFilter } from './location';
 
-export function query(filter: LocationFilter): FilterQuery<Location> {
+export function query(filter: LocationFilter): Filter<Location> {
   console.log(JSON.stringify(filter));
   const q: any = {};
   if (!isEmpty(filter.status)) {

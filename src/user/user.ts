@@ -14,7 +14,7 @@ export interface Skill {
   hirable?: boolean;
 }
 export interface User {
-  userId?: string;
+  id?: string;
   username?: string;
   email?: string;
   phone?: string;
@@ -26,7 +26,7 @@ export interface UserService extends ViewService<User, string> {
 }
 
 export const userModel: Attributes = {
-  userId: {
+  id: {
     key: true,
     length: 40,
   },

@@ -1,7 +1,7 @@
-import { FilterQuery } from 'mongodb';
+import { Filter } from 'mongodb';
 import { User, UserFilter } from './user';
 
-export function query(filter: UserFilter): FilterQuery<User> {
+export function query(filter: UserFilter): Filter<User> {
   const q: any = {};
   if (!isEmpty(filter.email)) {
     q.email = new RegExp(`^${filter.email}`);

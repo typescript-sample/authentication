@@ -3,9 +3,9 @@ import { Log, Manager, Search, SearchResult } from 'onecore';
 import { DB, SearchBuilder } from 'query-core';
 import { TemplateMap, useQuery } from 'query-mappers';
 import { Appreciation, AppreciationFilter, AppreciationModel, AppreciationReply, AppreciationReplyFilter, AppreciationReplyModel, AppreciationReplyRepository, AppreciationReplyService, AppreciationRepository, AppreciationService, UsefulAppreciation, UsefulAppreciationFilter, UsefulAppreciationModel, UsefulAppreciationRepository } from './appreciation';
-import { AppreciationController, AppreciationReplyController } from './appreciation-controller';
 import { SqlAppreciationReplyRepository } from './appreciation-reply-repository';
-export * from './appreciation-controller';
+import { AppreciationController, AppreciationReplyController } from './item-appreciation-controller';
+export * from './item-appreciation-controller';
 export { AppreciationController };
 
 import { SqlAppreciationRepository } from './appreciation-repository';
@@ -72,6 +72,8 @@ export function useAppreciationService(db: DB, mapper?: TemplateMap): Appreciati
   return new AppreciationManager(builder.search, repository, useful, builderUseful.search);
 }
 
+
+//
 export class AppreciationReplyManager extends Manager<AppreciationReply, string, AppreciationReplyFilter> implements AppreciationReplyService {
   constructor(public searchAppreciation: Search<AppreciationReply, AppreciationReplyFilter>, public repositoryReply: AppreciationReplyRepository, public repositoryAppreciation: AppreciationRepository, public useful: UsefulAppreciationRepository, public searchUseful: Search<UsefulAppreciation, UsefulAppreciationFilter>) {
     super(searchAppreciation, repositoryReply);

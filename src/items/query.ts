@@ -11,34 +11,31 @@ export function buildQuery(s: ItemFilter): Statement {
     where.push(`id = $${i++}`);
     params.push(s.id);
   }
+
   if (s.title && s.title.length > 0) {
     where.push(`title ilike $${i++}`);
     params.push('%' + s.title + '%');
   }
+
   if (s.status && s.status.length > 0) {
     where.push(`status ilike $${i++}`);
     params.push('%' + s.status + '%');
   }
+
   if (s.description && s.description.length > 0) {
     where.push(`description ilike $${i++}`);
     params.push('%' + s.description + '%');
   }
+
   if (s.categories && s.categories.length > 0) {
     params.push(s.categories);
     where.push(`categories && $${i++}`);
   }
-  if (s.q && s.q.length > 0) {
-    where.push(`(title ilike $${i++} or description ilike $${i++}) `);
-    params.push('%' + s.q + '%');
-    params.push('%' + s.q + '%');
-  }
+
   if (where.length > 0) {
-    query = query + `where` + where.join('and');
-  }
-  if (s.limit && s.limit > 0) {
-    query = query + ` limit ${s.limit}`;
+    query = query + ` where ` + where.join(' and ');
   }
 
-  console.log(query);
   return { query, params };
 }
+
